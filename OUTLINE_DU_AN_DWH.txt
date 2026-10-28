@@ -1,0 +1,917 @@
+================================================================================
+     OUTLINE DỰ ÁN: XÂY DỰNG DATA WAREHOUSE PHÂN TÍCH BÁN HÀNG E-COMMERCE
+     (Đối chiếu theo 6 tiêu chí đánh giá Rubric - Tổng 100 điểm)
+================================================================================
+
+Đề tài: Xây dựng Data Warehouse phân tích bán hàng và hành vi khách hàng
+        thương mại điện tử (E-Commerce Sales Analytics)
+Công cụ: SQL Server, SSIS, SSAS Multidimensional, T-SQL, MDX
+Dữ liệu: Kaggle E-Commerce Sales Analytics Dataset (138K đơn, 397K dòng
+          chi tiết, 25K khách hàng, 1.175 sản phẩm, 2021-2025)
+
+================================================================================
+TIÊU CHÍ 1: HÌNH THỨC BÁO CÁO (10 điểm) — CLO Q1,2,3,4
+================================================================================
+
+Mục tiêu: Đầy đủ các phần theo cấu trúc đồ án, diễn đạt mạch lạc.
+
+Cấu trúc báo cáo:
+  □ Trang bìa (tên trường, khoa, môn, đề tài, nhóm, GVHD, năm học)
+  □ Mục lục (có số trang)
+  □ Danh mục bảng biểu, hình ảnh, từ viết tắt
+  □ Lời mở đầu / Giới thiệu đề tài
+      - Bối cảnh & động lực (vì sao cần DWH cho e-commerce)
+      - Mục tiêu đồ án
+      - Phạm vi và giới hạn
+  □ Phần 1: Thiết kế kho dữ liệu (Tiêu chí 3)
+  □ Phần 2: Bus Matrix (Tiêu chí 3)
+  □ Phần 3: Quy trình ETL tổng quan (Tiêu chí 4)
+  □ Phần 4: Hiện thực hóa & Demo Pipeline ETL (Tiêu chí 4)
+  □ Phần 5: OLAP Cube trên SSAS (Tiêu chí 5 & 6)
+  □ Phần 6: Truy vấn phân tích SQL & MDX (Tiêu chí 5)
+  □ Phần 7: Kết luận & Hướng phát triển
+  □ Phụ lục (mã nguồn, bảng dữ liệu mẫu, danh sách điều chỉnh)
+  □ Tài liệu tham khảo (Ralph Kimball, tài liệu môn học, Kaggle)
+
+Lưu ý đạt điểm A (9-10):
+  - Đầy đủ CẤU TRÚC ĐỒ ÁN theo yêu cầu chuẩn đầu ra môn học
+  - Diễn đạt MẠCH LẠC, không lỗi chính tả
+  - Có hình minh họa cho mỗi phần quan trọng
+
+================================================================================
+TIÊU CHÍ 2: KỸ NĂNG LÀM VIỆC NHÓM (10 điểm) — CLO Q1,4
+================================================================================
+
+Mục tiêu: Mô tả đầy đủ nhiệm vụ đã phân chia & kết quả hoàn thành.
+
+Nội dung cần có trong báo cáo:
+  □ Bảng phân công nhiệm vụ (ai làm gì, deadline, trạng thái)
+      ┌──────────────┬─────────────────────────────────┬──────────┬─────────┐
+      │ Thành viên   │ Nhiệm vụ                        │ Deadline │ Kết quả │
+      ├──────────────┼─────────────────────────────────┼──────────┼─────────┤
+      │ Thành viên A │ Thiết kế Star/Snowflake Schema  │ Tuần X   │ ✓       │
+      │ Thành viên B │ Viết ETL pipeline (T-SQL/SSIS)  │ Tuần Y   │ ✓       │
+      │ Thành viên C │ Xây dựng OLAP Cube (SSAS)       │ Tuần Z   │ ✓       │
+      │ Thành viên D │ Truy vấn SQL/MDX + Báo cáo      │ Tuần W   │ ✓       │
+      └──────────────┴─────────────────────────────────┴──────────┴─────────┘
+
+  □ Tiến độ thực hiện (Gantt chart hoặc timeline)
+  □ Tự đánh giá chất lượng hoạt động nhóm
+      - Điểm mạnh / điểm yếu trong phối hợp
+      - Khó khăn gặp phải & cách giải quyết
+      - Mức đóng góp thực tế vs. kế hoạch
+  □ Nhận xét năng lực từng thành viên (phù hợp kết quả đồ án)
+
+Lưu ý đạt điểm A (9-10):
+  - Nhiệm vụ phân chia RÕ RÀNG, có kết quả hoàn thành ĐÚNG TIẾN ĐỘ
+  - Tự đánh giá SÁT với năng lực & kết quả thực tế
+
+================================================================================
+TIÊU CHÍ 3: KỸ NĂNG THIẾT KẾ KHO DỮ LIỆU (30 điểm) — CLO Q1-4
+================================================================================
+
+Mục tiêu: Thiết kế đúng mô hình, xác định chính xác Fact/Dim, áp dụng SCD
+           đúng loại, và thiết kế hierarchy rõ ràng.
+
+─── 3.1. PHƯƠNG PHÁP LUẬN: 4 BƯỚC KIMBALL ─────────────────────────────────
+
+  □ Bước 1: Chọn quy trình nghiệp vụ (Select Business Process)
+      Liệt kê 7 quy trình nghiệp vụ cốt lõi:
+      1) Bán hàng & Doanh thu (Sales Analytics)
+      2) Thực hiện đơn hàng & Giao hàng (Order Fulfillment)
+      3) Trả hàng & Hoàn tiền (Return Analytics)
+      4) Phản hồi & Đánh giá khách hàng (Customer Feedback)
+      5) Thu hút khách hàng mới (Customer Acquisition)
+      6) Giá trị & Mức độ gắn kết khách hàng (Customer Periodic Snapshot)
+      7) Khuyến mãi & Chiến dịch tiếp thị (Campaign & Promotion Analytics)
+
+  □ Bước 2: Xác định độ hạt (Declare the Grain)
+      Mỗi Fact có độ hạt (grain) duy nhất, rõ ràng, không gộp lẫn:
+      - Fact_Sales: 1 sản phẩm trong 1 đơn hàng (order_id + product_key)
+      - Fact_Order_Fulfillment: 1 đơn hàng hoàn chỉnh đã giao (order_id)
+      - Fact_Return: 1 đơn hàng bị trả về (order_id)
+      - Fact_Customer_Feedback: 1 đơn hàng có đánh giá sau mua (order_id)
+      - Fact_Customer_Acquisition: 1 khách hàng tại thời điểm đơn đầu tiên (customer_key)
+      - Fact_Customer_Snapshot: 1 khách hàng tại 1 ngày cuối tháng (snapshot_date_key + customer_key)
+      - Fact_Campaign_Promotion: 1 đơn hàng tham gia chiến dịch / có coupon (order_id)
+
+  □ Bước 3: Thiết kế bảng chiều (Dimensions, SCD & Hierarchies)
+      → Xem mục 3.2, 3.3, 3.4 (8 Dimensions tinh gọn, chất lượng cao)
+
+  □ Bước 4: Thiết kế bảng Fact & Độ đo (Facts & Measures)
+      → Xem mục 3.5 (7 Fact Tables chuẩn hóa số đo)
+
+─── 3.2. MÔ HÌNH SCHEMA ─────────────────────────────────────────────────────
+
+  □ Galaxy Schema kết hợp Star Schema (Constellation Schema)
+      - 7 bảng Fact + 8 bảng Dimension chất lượng cao
+      - Lý do chọn Galaxy Schema:
+        + Các bảng Fact dùng chung các Conformed Dimensions (Dim_Date, Dim_Customer,
+          Dim_Region) để hỗ trợ liên kết chéo (drill-across).
+        + Mỗi quy trình kinh doanh có chu kỳ và độ hạt riêng biệt, không thể gộp.
+      - Lý do chọn Star Schema (khử chuẩn hóa) thay vì Snowflake phân rã:
+        + Thay vì tách Category, Brand thành các bảng 2 cột vô nghĩa (fake dimensions),
+          ta khử chuẩn hóa trực tiếp vào Dim_Product.
+        + Thay vì tách Customer_Segment, City, State thành nhiều bảng nhỏ, ta gộp
+          vào Dim_Customer, giúp truy vấn JOIN nhanh hơn và SSAS Cube tạo hierarchy mượt mà.
+      - Áp dụng kỹ thuật Junk Dimension (Dim_Order_Profile):
+        + Gom 5 cờ trạng thái nhỏ (order_status, payment_method, payment_status,
+          sales_channel, delivery_status) vào 1 chiều duy nhất, giảm 4 khóa ngoại trong Fact.
+
+  □ Sơ đồ ER (Entity Relationship Diagram)
+      - Vẽ rõ 7 bảng Fact ở trung tâm, liên kết với 8 bảng Dimension xung quanh.
+      - Thể hiện rõ các khóa chính (PK), khóa ngoại (FK), degenerate dimensions.
+      - Công cụ vẽ: draw.io, PowerDesigner, hoặc SQL Server Database Diagram.
+
+  □ Giải thích nguyên lý thiết kế:
+      - Tách 7 Fact: Đảm bảo nguyên tắc Kimball "Mỗi quy trình nghiệp vụ, một độ hạt, một bảng Fact".
+      - Không cộng chéo sai lệch: Ví dụ phí vận chuyển mức đơn không được cộng dồn theo dòng sản phẩm
+        mà phải phân bổ tỷ lệ (allocated) trong Fact_Sales hoặc phân tích nguyên đơn trong Fact_Order_Fulfillment.
+
+─── 3.3. BẢNG CHIỀU (8 DIMENSIONS) ──────────────────────────────────────────
+
+  *** NGUYÊN TẮC: KHÔNG tạo Dim chỉ có 2 cột (key + name) ***
+  Mỗi Dim phải có đủ thuộc tính mô tả, hỗ trợ hierarchy, hoặc gom
+  nhiều cờ/trạng thái thành Junk Dimension.
+
+  Dữ liệu nguồn thực tế (4 file CSV):
+  ┌─────────────────────────────────────────────────┬──────────┐
+  │ File CSV                                        │ Số dòng  │
+  ├─────────────────────────────────────────────────┼──────────┤
+  │ ecommerce_sales_customer_analytics_150k.csv     │ 138.116  │
+  │   → 46 cột: thông tin đơn, khách, vận chuyển,  │          │
+  │     marketing, trả hàng, đánh giá, loyalty      │          │
+  │ order_items.csv                                 │ 397.569  │
+  │   → 12 cột: chi tiết sản phẩm trong đơn        │          │
+  │ product_catalog.csv                             │ 1.175    │
+  │   → 9 cột: sản phẩm, danh mục, thương hiệu    │          │
+  │ customer_master.csv                             │ 25.000   │
+  │   → 11 cột: nhân khẩu học, địa lý, CAC         │          │
+  └─────────────────────────────────────────────────┴──────────┘
+
+  Thiết kế 8 Dimension chất lượng cao:
+
+  ┌───┬─────────────────────────┬──────────────┬──────────────────────────────┐
+  │ # │ Tên bảng                │ Kỹ thuật     │ Hierarchy / Ý nghĩa         │
+  ├───┼─────────────────────────┼──────────────┼──────────────────────────────┤
+  │ 1 │ Dim_Date                │ Smart Key    │ Calendar: Year→Qtr→Month    │
+  │   │                         │ Role-Playing │  →Date                      │
+  │   │                         │ SCD Type 0   │ Week: Year→Week→Date        │
+  │ 2 │ Dim_Product             │ Denormalized │ Category: Cat→SubCat→Product│
+  │   │                         │ Star Schema  │ Brand: Brand→Product        │
+  │   │                         │ SCD Type 1   │ Supplier: Supplier→Product  │
+  │ 3 │ Dim_Customer            │ Denormalized │ Geography: Country→State    │
+  │   │                         │ Star Schema  │  →City→Customer             │
+  │   │                         │ SCD Type 1   │ Segment→Customer            │
+  │   │                         │              │ AgeGroup→Customer           │
+  │ 4 │ Dim_Region              │ Conformed    │ Admin: Country→State        │
+  │   │                         │ SCD Type 1   │ Business: Region→State      │
+  │ 5 │ Dim_Shipping            │ Multi-attr   │ Shipping: Method→Warehouse  │
+  │   │                         │ SCD Type 1   │ + speed_category (derived)  │
+  │ 6 │ Dim_Order_Profile       │ JUNK DIM     │ Gom 5 cờ trạng thái đơn    │
+  │   │                         │ SCD Type 1   │                             │
+  │ 7 │ Dim_Marketing_Campaign  │ Multi-attr   │ Channel→Campaign→Coupon     │
+  │   │                         │ SCD Type 1   │ + channel_type (derived)    │
+  │ 8 │ Dim_Return_Profile      │ Multi-attr   │ Status + Reason + Category  │
+  │   │                         │ SCD Type 1   │ (reason_category derived)   │
+  └───┴─────────────────────────┴──────────────┴──────────────────────────────┘
+
+  ═══════════════════════════════════════════════════════════════
+  DIM 1: Dim_Date — Chiều Thời gian (Smart Key, Role-Playing)
+  ═══════════════════════════════════════════════════════════════
+  Nguồn: Sinh tự động bằng T-SQL (CTE) từ MIN(order_date) đến
+         MAX(order_date + delivery_days), bao phủ 2021-01-01 → 2026-12-31.
+  SCD: Type 0 (dữ liệu tĩnh, sinh 1 lần, không bao giờ thay đổi).
+  Role-Playing: Cùng 1 bảng đóng nhiều vai trong các Fact:
+    - Order Date (Fact_Sales, Fact_Return, Fact_Feedback)
+    - Expected Delivery Date (Fact_Order_Fulfillment)
+    - Actual Delivery Date (Fact_Order_Fulfillment)
+    - Snapshot Date (Fact_Customer_Snapshot)
+
+  Thuộc tính (14 cột):
+  ┌─────────────────┬──────────────┬─────────────────────────────────────┐
+  │ Cột             │ Kiểu        │ Giải thích                          │
+  ├─────────────────┼──────────────┼─────────────────────────────────────┤
+  │ date_key (PK)   │ INT          │ Smart key dạng YYYYMMDD (20231106) │
+  │ full_date       │ DATE         │ Ngày đầy đủ                        │
+  │ year            │ SMALLINT     │ 2021, 2022...                      │
+  │ quarter         │ TINYINT      │ 1, 2, 3, 4                         │
+  │ quarter_name    │ VARCHAR(10)  │ Q1, Q2, Q3, Q4                     │
+  │ month           │ TINYINT      │ 1-12                               │
+  │ month_name      │ VARCHAR(20)  │ January, February...               │
+  │ day             │ TINYINT      │ 1-31                               │
+  │ day_of_week     │ VARCHAR(20)  │ Monday, Tuesday...                 │
+  │ day_of_week_num │ TINYINT      │ 1 (Mon) → 7 (Sun)                 │
+  │ is_weekend      │ BIT          │ 0/1                                │
+  │ week_of_year    │ TINYINT      │ 1-53                               │
+  │ year_month      │ CHAR(7)      │ YYYY-MM (2023-11)                  │
+  │ season          │ VARCHAR(20)  │ Spring, Summer, Autumn, Winter     │
+  │ is_month_end    │ BIT          │ 1 = ngày cuối tháng (cho Snapshot) │
+  └─────────────────┴──────────────┴─────────────────────────────────────┘
+  Hierarchy:
+    Calendar: year → quarter_name → month_name → full_date
+    Week:     year → week_of_year → full_date
+
+  ═══════════════════════════════════════════════════════════════
+  DIM 2: Dim_Product — Chiều Sản phẩm (Denormalized Star Schema)
+  ═══════════════════════════════════════════════════════════════
+  Nguồn: product_catalog.csv (1.175 sản phẩm, 9 cột).
+  SCD: Type 1 (ghi đè khi nạp lại).
+  
+  *** CÁCH LÀM: Gộp Category, SubCategory, Brand trực tiếp vào ***
+  *** Dim_Product thay vì tách thành 3 bảng 2 cột vô nghĩa.   ***
+  *** Thêm thuộc tính suy ra (price_tier, rating_group) để     ***
+  *** phân tích phong phú hơn.                                 ***
+
+  Thuộc tính (12 cột):
+  ┌─────────────────┬───────────────┬──────────────────────────────────────┐
+  │ Cột             │ Kiểu          │ Nguồn / Cách tính                   │
+  ├─────────────────┼───────────────┼──────────────────────────────────────┤
+  │ product_key(PK) │ INT IDENTITY  │ Surrogate Key                       │
+  │ product_id (BK) │ VARCHAR(50)   │ product_catalog.product_id           │
+  │ product_name    │ NVARCHAR(255) │ product_catalog.product_name         │
+  │ category        │ NVARCHAR(100) │ product_catalog.product_category     │
+  │                 │               │   (15 giá trị: Electronics, Fashion…)│
+  │ subcategory     │ NVARCHAR(100) │ product_catalog.product_subcategory  │
+  │                 │               │   (117 giá trị)                      │
+  │ brand           │ NVARCHAR(100) │ product_catalog.brand (144 thương    │
+  │                 │               │   hiệu: Apple, Samsung, Nike…)       │
+  │ supplier        │ NVARCHAR(150) │ product_catalog.supplier (10 NCC)    │
+  │ unit_price      │ DECIMAL(18,4) │ product_catalog.unit_price           │
+  │ product_cost    │ DECIMAL(18,4) │ product_catalog.product_cost         │
+  │ price_tier      │ VARCHAR(30)   │ DERIVED: dựa trên unit_price         │
+  │                 │               │   Budget (<100), Mid-Range (100-500),│
+  │                 │               │   Premium (500-1000), Luxury (>1000) │
+  │ product_rating  │ DECIMAL(5,2)  │ product_catalog.product_rating       │
+  │ rating_group    │ VARCHAR(30)   │ DERIVED: Low (<3), Average (3-4),    │
+  │                 │               │   High (>4)                          │
+  └─────────────────┴───────────────┴──────────────────────────────────────┘
+  Hierarchy:
+    Product Category: category → subcategory → product_name
+    Product Brand:    brand → product_name
+    Product Supplier: supplier → brand → product_name
+    Price Analysis:   price_tier → product_name
+
+  ═══════════════════════════════════════════════════════════════
+  DIM 3: Dim_Customer — Chiều Khách hàng (Denormalized Star Schema)
+  ═══════════════════════════════════════════════════════════════
+  Nguồn: customer_master.csv (25.000 khách, 11 cột) + tổng hợp
+         từ sales CSV (customer_type, loyalty tính từ đơn hàng).
+  SCD: Type 1 (ghi đè khi nạp lại).
+
+  *** CÁCH LÀM: Gộp Segment, Geography trực tiếp vào Customer  ***
+  *** thay vì tạo Dim_Customer_Segment (chỉ 4 giá trị) riêng. ***
+  *** Thêm thuộc tính suy ra (age_group) để phân tích phong phú.***
+
+  Thuộc tính (14 cột):
+  ┌──────────────────────────┬───────────────┬──────────────────────────────┐
+  │ Cột                      │ Kiểu          │ Nguồn / Cách tính            │
+  ├──────────────────────────┼───────────────┼──────────────────────────────┤
+  │ customer_key (PK)        │ INT IDENTITY  │ Surrogate Key                │
+  │ customer_id (BK)         │ VARCHAR(50)   │ customer_master.customer_id  │
+  │ customer_name            │ NVARCHAR(150) │ customer_master.customer_name│
+  │ customer_age             │ SMALLINT      │ customer_master.customer_age │
+  │ age_group                │ VARCHAR(30)   │ DERIVED từ customer_age:     │
+  │                          │               │   18-25, 26-35, 36-50, 50+   │
+  │ gender                   │ VARCHAR(20)   │ customer_master.gender       │
+  │                          │               │   (3: Male, Female, Non-Binary│
+  │ customer_segment         │ VARCHAR(50)   │ customer_master.customer_    │
+  │                          │               │   segment (4: Consumer,      │
+  │                          │               │   Premium, VIP, Business)    │
+  │ customer_type            │ VARCHAR(50)   │ DERIVED từ sales:            │
+  │                          │               │   Loyal, Returning, New      │
+  │ customer_city            │ NVARCHAR(100) │ customer_master.customer_city│
+  │                          │               │   (15.555 thành phố)         │
+  │ customer_state           │ NVARCHAR(100) │ customer_master.customer_    │
+  │                          │               │   state (38 bang)            │
+  │ customer_country         │ NVARCHAR(100) │ customer_master.customer_    │
+  │                          │               │   country (7: USA, UK, DE…)  │
+  │ region                   │ VARCHAR(50)   │ customer_master.region       │
+  │                          │               │   (5: North, South, East…)   │
+  │ customer_postal_code     │ VARCHAR(30)   │ customer_master.postal_code  │
+  │ customer_acquisition_cost│ DECIMAL(18,4) │ customer_master.customer_    │
+  │                          │               │   acquisition_cost           │
+  └──────────────────────────┴───────────────┴──────────────────────────────┘
+  Hierarchy:
+    Geography:  customer_country → customer_state → customer_city → customer
+    Segment:    customer_segment → customer
+    Age:        age_group → customer
+    Gender:     gender → customer
+
+  ═══════════════════════════════════════════════════════════════
+  DIM 4: Dim_Region — Chiều Khu vực Địa lý (Conformed, dùng chung)
+  ═══════════════════════════════════════════════════════════════
+  Nguồn: Tổ hợp (region, state, country) từ customer_master.csv
+         → 38 dòng (mỗi state thuộc đúng 1 country, 1 region).
+  SCD: Type 1.
+  Tại sao cần: Dim_Customer có geography riêng từng khách, nhưng 
+  Fact cần 1 khóa region để phân tích theo vùng mà không JOIN qua
+  Dim_Customer (tối ưu cho Cube).
+
+  Thuộc tính (4 cột):
+  ┌─────────────────┬───────────────┬─────────────────────────────────────┐
+  │ Cột             │ Kiểu          │ Nguồn                               │
+  ├─────────────────┼───────────────┼─────────────────────────────────────┤
+  │ region_key (PK) │ INT IDENTITY  │ Surrogate Key                       │
+  │ region          │ VARCHAR(50)   │ 5 vùng: North, South, East, West,  │
+  │                 │               │   Central                           │
+  │ state           │ NVARCHAR(100) │ 38 bang/tỉnh                        │
+  │ country         │ NVARCHAR(100) │ 7 quốc gia: USA, UK, Germany,      │
+  │                 │               │   Canada, India, UAE, Australia     │
+  └─────────────────┴───────────────┴─────────────────────────────────────┘
+  Hierarchy (2 nhánh độc lập):
+    Administrative: country → state
+    Business Region: region → state
+
+  ═══════════════════════════════════════════════════════════════
+  DIM 5: Dim_Shipping — Chiều Vận chuyển & Kho (Multi-attribute)
+  ═══════════════════════════════════════════════════════════════
+  Nguồn: Tổ hợp (shipping_method, warehouse) từ sales CSV
+         → 76 dòng (4 method × 19 warehouse).
+  SCD: Type 1.
+
+  *** CÁCH LÀM: Gộp method + warehouse + thêm thuộc tính suy ra ***
+  *** (shipping_speed_category) thay vì Dim 2 cột vô nghĩa.     ***
+
+  Thuộc tính (4 cột):
+  ┌──────────────────────────┬───────────────┬──────────────────────────────┐
+  │ Cột                      │ Kiểu          │ Nguồn / Cách tính            │
+  ├──────────────────────────┼───────────────┼──────────────────────────────┤
+  │ shipping_key (PK)        │ INT IDENTITY  │ Surrogate Key                │
+  │ shipping_method          │ NVARCHAR(100) │ 4 giá trị: Standard,        │
+  │                          │               │   Express, Economy, Same Day │
+  │ warehouse                │ NVARCHAR(100) │ 19 kho: WH-001 → WH-019     │
+  │ shipping_speed_category  │ VARCHAR(50)   │ DERIVED: phân nhóm tốc độ   │
+  │                          │               │   Fast (Same Day, Express),  │
+  │                          │               │   Standard, Economy          │
+  └──────────────────────────┴───────────────┴──────────────────────────────┘
+  Hierarchy: shipping_method → warehouse
+
+  ═══════════════════════════════════════════════════════════════
+  DIM 6: Dim_Order_Profile — JUNK DIMENSION (Kỹ thuật Kimball)
+  ═══════════════════════════════════════════════════════════════
+  Nguồn: Tổ hợp các cờ/trạng thái từ sales CSV.
+  SCD: Type 1.
+
+  *** ĐÂY LÀ ĐIỂM SÁNG THIẾT KẾ: Thay vì tạo 5 Dim riêng biệt ***
+  *** mỗi cái chỉ có 3-7 giá trị (vô nghĩa), gộp thành 1 Junk  ***
+  *** Dimension → giảm số FK trong Fact, đúng best practice.      ***
+
+  Gom 5 thuộc tính trạng thái đơn hàng (mỗi cái chỉ 3-7 giá trị):
+  ┌──────────────────────┬───────────────┬──────────────────────────────────┐
+  │ Cột                  │ Kiểu          │ Các giá trị thực tế từ CSV       │
+  ├──────────────────────┼───────────────┼──────────────────────────────────┤
+  │ order_profile_key(PK)│ INT IDENTITY  │ Surrogate Key                    │
+  │ order_status         │ VARCHAR(50)   │ 4: Completed, Cancelled,         │
+  │                      │               │    Pending, Returned             │
+  │ payment_method       │ VARCHAR(50)   │ 7: Credit Card, Debit Card,      │
+  │                      │               │    Digital Wallet, PayPal,       │
+  │                      │               │    Bank Transfer, COD, BNPL     │
+  │ payment_status       │ VARCHAR(50)   │ 4: Paid, Pending, Failed,        │
+  │                      │               │    Refunded                      │
+  │ sales_channel        │ VARCHAR(50)   │ 4: Website, Mobile App,          │
+  │                      │               │    Marketplace, Social Media     │
+  │ delivery_status      │ VARCHAR(50)   │ 4: On Time, Delayed, Early,      │
+  │                      │               │    Cancelled                     │
+  └──────────────────────┴───────────────┴──────────────────────────────────┘
+  Tổng tổ hợp tối đa: 4×7×4×4×4 = 1.792 dòng (thực tế ít hơn vì
+  không phải mọi tổ hợp đều xuất hiện trong dữ liệu).
+
+  Ưu điểm:
+  - Fact_Sales chỉ cần 1 FK (order_profile_key) thay vì 5 FK
+  - Vẫn filter/group/slice được theo từng thuộc tính
+  - Đúng kỹ thuật "Junk Dimension" trong Ralph Kimball
+
+  ═══════════════════════════════════════════════════════════════
+  DIM 7: Dim_Marketing_Campaign — Chiều Tiếp thị (Multi-attribute)
+  ═══════════════════════════════════════════════════════════════
+  Nguồn: Tổ hợp (marketing_channel, campaign_name, coupon_code)
+         từ sales CSV.
+  SCD: Type 1.
+
+  *** CÁCH LÀM: Gộp channel + campaign + coupon + thêm thuộc tính ***
+  *** suy ra (has_coupon_flag, channel_type) → Dim chất lượng.     ***
+
+  Thuộc tính (6 cột):
+  ┌───────────────────┬───────────────┬──────────────────────────────────────┐
+  │ Cột               │ Kiểu          │ Nguồn / Cách tính                    │
+  ├───────────────────┼───────────────┼──────────────────────────────────────┤
+  │ marketing_key(PK) │ INT IDENTITY  │ Surrogate Key                        │
+  │ marketing_channel │ VARCHAR(100)  │ 10 kênh: Google Ads, Facebook Ads,   │
+  │                   │               │   Instagram, TikTok, YouTube,        │
+  │                   │               │   Email Marketing, Affiliate,        │
+  │                   │               │   Direct, Organic Search, Referral   │
+  │ campaign_name     │ VARCHAR(150)  │ 17 chiến dịch: FB_Retargeting,       │
+  │                   │               │   Google_Shopping, Promo_Email,      │
+  │                   │               │   Default_Campaign... (NULL=no camp) │
+  │ coupon_code       │ VARCHAR(50)   │ 40 mã: SAVE10-SAVE49... (NULL=none)  │
+  │ has_coupon_flag   │ BIT           │ DERIVED: 1 nếu coupon_code NOT NULL  │
+  │ channel_type      │ VARCHAR(50)   │ DERIVED từ marketing_channel:        │
+  │                   │               │   Paid Media (Google/FB/Insta/TikTok/│
+  │                   │               │     YouTube Ads)                     │
+  │                   │               │   Owned Media (Email, Direct)        │
+  │                   │               │   Organic (Organic Search, Referral, │
+  │                   │               │     Affiliate)                       │
+  └───────────────────┴───────────────┴──────────────────────────────────────┘
+  Hierarchy: channel_type → marketing_channel → campaign_name → coupon_code
+
+  ═══════════════════════════════════════════════════════════════
+  DIM 8: Dim_Return_Profile — Chiều Hoàn trả (Multi-attribute)
+  ═══════════════════════════════════════════════════════════════
+  Nguồn: Tổ hợp (return_status, return_reason) từ sales CSV
+         → 8 lý do trả hàng.
+  SCD: Type 1.
+
+  *** CÁCH LÀM: Thay vì Dim chỉ có return_reason (1 cột), thêm  ***
+  *** return_reason_category (thuộc tính suy ra) phân nhóm nguyên ***
+  *** nhân để phân tích ở mức cao hơn.                            ***
+
+  Thuộc tính (4 cột):
+  ┌──────────────────────────┬───────────────┬──────────────────────────────┐
+  │ Cột                      │ Kiểu          │ Nguồn / Cách tính            │
+  ├──────────────────────────┼───────────────┼──────────────────────────────┤
+  │ return_profile_key (PK)  │ INT IDENTITY  │ Surrogate Key                │
+  │ return_status            │ VARCHAR(50)   │ 1 giá trị: Returned          │
+  │ return_reason            │ NVARCHAR(150) │ 8 giá trị: Wrong Product,    │
+  │                          │               │   Defective Product, Size    │
+  │                          │               │   Issue, Damaged Product,    │
+  │                          │               │   Product Not as Expected,   │
+  │                          │               │   Changed Mind, Late Delivery│
+  │                          │               │   , Other                    │
+  │ return_reason_category   │ VARCHAR(50)   │ DERIVED: phân nhóm nguyên    │
+  │                          │               │   nhân:                      │
+  │                          │               │   Product Quality (Defective,│
+  │                          │               │     Damaged, Wrong, Not as   │
+  │                          │               │     Expected)                │
+  │                          │               │   Logistics (Late Delivery)  │
+  │                          │               │   Customer Choice (Changed   │
+  │                          │               │     Mind, Size Issue)        │
+  │                          │               │   Other                      │
+  └──────────────────────────┴───────────────┴──────────────────────────────┘
+  Hierarchy: return_reason_category → return_reason
+
+  ═══════════════════════════════════════════════════════════════
+  SO SÁNH: THIẾT KẾ CŨ (17 Dim) vs MỚI (8 Dim)
+  ═══════════════════════════════════════════════════════════════
+  ┌──────────────────────────┬──────────────────────────────────────────────┐
+  │ Thiết kế CŨ (17 Dim)    │ Thiết kế MỚI (8 Dim)                        │
+  ├──────────────────────────┼──────────────────────────────────────────────┤
+  │ Dim_Category (2 cột)     │ → Gộp vào Dim_Product (denormalized)        │
+  │ Dim_Sub_Category (3 cột) │ → Gộp vào Dim_Product (denormalized)        │
+  │ Dim_Brand (2 cột)        │ → Gộp vào Dim_Product (denormalized)        │
+  │ Dim_Customer_Segment     │ → Gộp vào Dim_Customer (denormalized)       │
+  │   (2 cột)                │                                              │
+  │ Dim_Loyalty_Tier (4 cột) │ → Chuyển thành thuộc tính trong              │
+  │                          │   Fact_Customer_Snapshot (loyalty_tier)      │
+  │ Dim_Order_Status (2 cột) │ → Gộp vào Dim_Order_Profile (Junk Dim)      │
+  │ Dim_Payment_Method       │ → Gộp vào Dim_Order_Profile (Junk Dim)      │
+  │   (2 cột)                │                                              │
+  │ Dim_Sales_Channel (2 cột)│ → Gộp vào Dim_Order_Profile (Junk Dim)      │
+  │ Dim_Delivery_Status      │ → Gộp vào Dim_Order_Profile (Junk Dim)      │
+  │   (2 cột)                │                                              │
+  │ Dim_Sentiment (2 cột)    │ → Chuyển thành thuộc tính trong              │
+  │                          │   Fact_Customer_Feedback (review_sentiment)  │
+  │ Dim_Return_Reason (3 cột)│ → Nâng cấp thành Dim_Return_Profile (4 cột) │
+  │ Dim_Channel (4 cột)      │ → Nâng cấp Dim_Marketing_Campaign (6 cột)   │
+  └──────────────────────────┴──────────────────────────────────────────────┘
+  
+  Lý do gộp/bỏ:
+  - Dim chỉ có key + 1 name → KHÔNG có hierarchy, KHÔNG có thuộc tính
+    mô tả → vô nghĩa trong phân tích, chỉ làm tăng số FK trong Fact
+  - Denormalized Star Schema (Product, Customer): phù hợp hơn cho SSAS
+    Cube, giảm JOIN, dễ drill-down
+  - Junk Dimension (Order Profile): kỹ thuật chuẩn Kimball cho các cờ
+    trạng thái ít giá trị
+  - Thuộc tính suy ra (derived): price_tier, age_group, channel_type,
+    return_reason_category → tạo thêm góc phân tích mà không thêm Dim
+
+─── 3.4. SLOWLY CHANGING DIMENSION (SCD) ─────────────────────────────────────
+
+  □ Giải thích lý thuyết SCD Type 0, 1, 2, 3
+  □ Áp dụng cụ thể trong dự án:
+      - SCD Type 0: Dim_Date (dữ liệu tĩnh, cố định)
+      - SCD Type 1: Tất cả chiều còn lại (ETL xóa và nạp lại toàn bộ,
+        luôn phản ánh giá trị mới nhất, không lưu lịch sử)
+      - Giải thích tại sao không dùng SCD Type 2:
+        → ETL hiện tại nạp full reload, không incremental
+        → Lịch sử hạng thành viên được lưu qua Fact_Customer_Snapshot
+      - Hướng mở rộng SCD Type 2: Dim_Customer (nếu cần theo dõi
+        lịch sử thay đổi phân khúc → thêm effective_date, expiration_date,
+        is_current)
+
+─── 3.5. BẢNG FACT & ĐỘ ĐO ──────────────────────────────────────────────────
+
+  Với MỖI bảng Fact, trình bày:
+  □ Nguồn dữ liệu
+  □ Loại Fact (Transaction / Periodic Snapshot / Accumulating Snapshot)
+  □ Độ hạt (grain) rõ ràng
+  □ Câu hỏi nghiệp vụ mà Fact trả lời
+  □ Khóa ngoại (FK → Dimension nào)
+  □ Degenerate Dimension (nếu có)
+  □ Độ đo cộng dồn (additive measures)
+  □ Độ đo tính toán trên Cube (Calculated Members)
+  □ Nguyên tắc: KHÔNG lưu tỷ lệ trong Fact
+    → Tỷ lệ tính bằng tỷ số của hai tổng trên Cube
+
+  Danh sách 7 Fact Tables (khớp với 8 Dim):
+  ┌───┬──────────────────────────────┬──────────────────┬──────────┬───────┐
+  │ # │ Fact Table                   │ Loại             │ Số dòng  │ FK    │
+  ├───┼──────────────────────────────┼──────────────────┼──────────┼───────┤
+  │ 1 │ Fact_Sales                   │ Transaction      │ 397.482  │ 6 FK  │
+  │   │                              │                  │          │ (Date,│
+  │   │                              │                  │          │ Cust, │
+  │   │                              │                  │          │ Prod, │
+  │   │                              │                  │          │ Region│
+  │   │                              │                  │          │ Order │
+  │   │                              │                  │          │ Prof, │
+  │   │                              │                  │          │ Mkt)  │
+  │ 2 │ Fact_Order_Fulfillment       │ Accum. Snapshot  │ 113.559  │ 5 FK  │
+  │ 3 │ Fact_Return                  │ Transaction      │ 9.462    │ 5 FK  │
+  │ 4 │ Fact_Customer_Feedback       │ Transaction      │ (KS)     │ 4 FK  │
+  │ 5 │ Fact_Customer_Acquisition    │ Transaction      │ 24.911   │ 4 FK  │
+  │ 6 │ Fact_Customer_Snapshot       │ Periodic Snapshot │ ~1.49M   │ 2 FK  │
+  │ 7 │ Fact_Campaign_Promotion      │ Transaction      │ (KS)     │ 5 FK  │
+  └───┴──────────────────────────────┴──────────────────┴──────────┴───────┘
+
+─── 3.6. ENTERPRISE BUS MATRIX ───────────────────────────────────────────────
+
+  □ Vẽ bảng Bus Matrix (7 Fact × 8 Dimension):
+
+    Fact \ Dim                │Date│Prod│Cust│Regn│Ship│OrdP│Mkt │RetP│
+    ──────────────────────────┼────┼────┼────┼────┼────┼────┼────┼────┤
+    1. Fact_Sales             │ X  │ X  │ X  │ X  │    │ X  │ X  │    │
+    2. Fact_Order_Fulfillment │X×3 │    │ X  │ X  │ X  │ X  │    │    │
+    3. Fact_Return            │ X  │    │ X  │ X  │ X  │    │    │ X  │
+    4. Fact_Customer_Feedback │ X  │    │ X  │ X  │    │ X  │    │    │
+    5. Fact_Customer_Acquis.  │ X  │    │ X  │ X  │    │    │ X  │    │
+    6. Fact_Customer_Snapshot │ X  │    │ X  │    │    │    │    │    │
+    7. Fact_Campaign_Promo    │ X  │    │ X  │ X  │    │ X  │ X  │    │
+
+    Ghi chú:
+    - X×3: Dim_Date đóng 3 vai (Order Date, Expected Delivery, Actual Delivery)
+    - Conformed Dimensions: Date, Customer (xuất hiện ở cả 7 Fact)
+    - OrdP = Dim_Order_Profile (Junk Dim)
+    - Mkt  = Dim_Marketing_Campaign
+    - RetP = Dim_Return_Profile
+
+  □ Giải thích quy tắc drill-across giữa các Fact thông qua
+    Conformed Dimensions và order_id (Degenerate Dimension)
+
+================================================================================
+TIÊU CHÍ 4: KỸ NĂNG SỬ DỤNG CÔNG CỤ TÍCH HỢP DỮ LIỆU (ETL) (20 điểm) — G2
+================================================================================
+
+Mục tiêu: Sử dụng thành thạo SSIS / T-SQL để xây dựng pipeline ETL hoàn chỉnh.
+
+─── 4.1. KIẾN TRÚC ETL TỔNG QUAN ────────────────────────────────────────────
+
+  □ Sơ đồ kiến trúc 4 tầng chuẩn Enterprise Data Warehouse:
+      Nguồn (4 CSV Kaggle) 
+        → Staging Area (4 bảng staging: stg_sales_full, stg_order_items, 
+                        stg_product_catalog, stg_customer_master)
+        → DWH Destination (Galaxy Schema tinh gọn: 8 Dim + 7 Fact)
+        → Tầng phân tích OLAP (SSAS Multidimensional Cube / Power BI Reporting)
+
+  □ Công cụ triển khai:
+      - Script T-SQL (02_ETL_EcommerceDW_v2.sql) chạy trong 1 Transaction trọn vẹn.
+      - SET XACT_ABORT ON; SET NOCOUNT ON;
+      - Khối TRY...CATCH xử lý lỗi, nếu có bất kỳ vi phạm nào sẽ tự động ROLLBACK toàn bộ.
+
+─── 4.2. EXTRACT (TRÍCH XUẤT) ────────────────────────────────────────────────
+
+  □ Nguồn dữ liệu: 4 file CSV từ Kaggle
+      - ecommerce_sales_customer_analytics_150k.csv (138.116 dòng)
+      - order_items.csv (397.569 dòng)
+      - product_catalog.csv (1.175 dòng)
+      - customer_master.csv (25.000 dòng)
+
+  □ Nạp vào Staging (nguyên trạng):
+      - stg_sales_full, stg_order_items, stg_product_catalog, stg_customer_master
+      - BULK INSERT hoặc SSIS Data Flow Task (Flat File Source → OLE DB Destination)
+
+  □ Khảo sát chất lượng dữ liệu nguồn trước khi nạp:
+      - Toàn vẹn tham chiếu (order_id, customer_id, product_id)
+      - Dòng trùng khóa (87 dòng trùng order_id + product_id được dedup bằng ROW_NUMBER)
+      - Giá trị thiếu hợp lệ (delivery_days, return_status, campaign_name...)
+      - Kiểm tra currency (tất cả quy về chuẩn thanh toán hoặc phân tích theo từng loại)
+
+─── 4.3. TRANSFORM (BIẾN ĐỔI) ───────────────────────────────────────────────
+
+  □ Chuẩn hóa kiểu dữ liệu & chuỗi:
+      - LTRIM(RTRIM()) cắt khoảng trắng dư thừa
+      - NULLIF() chuyển chuỗi rỗng '' thành NULL
+      - TRY_CONVERT() ép kiểu an toàn (không bao giờ làm đứt luồng ETL vì lỗi định dạng)
+
+  □ Khử trùng lặp theo Business Key:
+      - DeduplicatedItems CTE: ROW_NUMBER() OVER (PARTITION BY order_id, product_id)
+        đảm bảo Fact_Sales có grain tuyệt đối chính xác (397.482 dòng).
+
+  □ Data Enrichment (Làm giàu dữ liệu & Thuộc tính suy ra):
+      - customer_type: tổng hợp từ lịch sử đơn hàng
+      - age_group: '18-25', '26-35', '36-50', '50+'
+      - price_tier: 'Budget', 'Mid-Range', 'Premium', 'Luxury'
+      - rating_group: 'Low', 'Average', 'High'
+      - shipping_speed_category: 'Fast', 'Standard', 'Economy'
+      - channel_type: 'Paid Media', 'Owned Media', 'Organic Media'
+      - return_reason_category: 'Product Quality', 'Logistics', 'Customer Choice'
+      - loyalty_tier & rfm_score: tính toán dựa trên ngày mua gần nhất, tần suất và doanh thu lũy kế
+
+  □ Business Rules:
+      - Phân bổ chi phí vận chuyển theo dòng sản phẩm
+      - Tính contribution_margin = net_revenue - product_cost - shipping_cost_allocated
+      - Chống chia cho 0: NULLIF(gross_sales, 0)
+      - Delivery variance: actual_delivery_days - estimated_delivery_days, late_flag = 1 nếu trễ
+
+─── 4.4. LOAD (NẠP DỮ LIỆU) ─────────────────────────────────────────────────
+
+  □ Thứ tự nạp 8 Bảng Chiều (Dimensions) đảm bảo toàn vẹn:
+      1. Dim_Date (Sinh tự động bằng CTE DateSequence từ 2021 đến 2026)
+      2. Dim_Product (Nạp từ stg_product_catalog, tính price_tier, rating_group)
+      3. Dim_Region (Nạp SELECT DISTINCT region, state, country từ stg_customer_master)
+      4. Dim_Customer (Nạp từ stg_customer_master + customer_type từ stg_sales_full)
+      5. Dim_Shipping (Nạp SELECT DISTINCT shipping_method, warehouse)
+      6. Dim_Order_Profile (Junk Dim: SELECT DISTINCT 5 trạng thái từ stg_sales_full)
+      7. Dim_Marketing_Campaign (Nạp SELECT DISTINCT channel, campaign, coupon)
+      8. Dim_Return_Profile (Nạp SELECT DISTINCT return_status, return_reason)
+
+  □ Sinh Surrogate Key:
+      - INT IDENTITY(1,1) cho các chiều (trừ Dim_Date dùng Smart Key YYYYMMDD)
+      - DBCC CHECKIDENT RESEED 0 dọn sạch và reset định danh mỗi lần nạp mới.
+
+  □ Thứ tự nạp 7 Bảng Sự kiện (Fact Tables):
+      1. Fact_Sales (Chi tiết đơn hàng - Grain: order_id + product_key)
+      2. Fact_Order_Fulfillment (Vòng đời giao hàng - Grain: order_id)
+      3. Fact_Return (Sự kiện trả hàng - Grain: order_id)
+      4. Fact_Customer_Feedback (Đánh giá sau mua - Grain: order_id)
+      5. Fact_Customer_Acquisition (Thu hút khách mới - Grain: customer_key)
+      6. Fact_Customer_Snapshot (Snapshot định kỳ - Grain: snapshot_date_key + customer_key)
+      7. Fact_Campaign_Promotion (Khuyến mãi & ROI chiến dịch - Grain: order_id)
+
+  □ Surrogate Key Lookup:
+      - Khóa bắt buộc: INNER JOIN với Dim_Product, Dim_Customer, Dim_Date.
+      - Khóa tùy chọn: LEFT JOIN với Dim_Region, Dim_Shipping, Dim_Order_Profile, Dim_Marketing_Campaign, Dim_Return_Profile xử lý NULL an toàn bằng ISNULL().
+
+─── 4.5. STAGING AREA ────────────────────────────────────────────────────────
+
+  □ Giải thích vai trò của Staging:
+      - Tách biệt nguồn và đích → nguồn không bị ảnh hưởng
+      - Cho phép transform & cleansing trước khi nạp DWH
+      - Hỗ trợ debug và audit trail
+
+─── 4.6. INCREMENTAL LOAD (NẾU CÓ) ──────────────────────────────────────────
+
+  □ Hiện tại: FULL LOAD (xóa và nạp lại toàn bộ)
+  □ Giải thích lý do chọn Full Load cho dự án này:
+      - Dữ liệu nguồn là file CSV tĩnh, không phải DB transactional
+      - Khi ETL chạy, dữ liệu luôn đầy đủ từ đầu
+  □ Hướng mở rộng Incremental Load:
+      - CDC (Change Data Capture) nếu nguồn là SQL Server
+      - Watermark (timestamp/ID) cho nạp gia tăng
+      - Lookup + Conditional Split trong SSIS
+
+  *** LƯU Ý QUAN TRỌNG: Tiêu chí 4 yêu cầu Incremental Load ở mức A ***
+  *** → Cần demo hoặc giải thích rõ cơ chế detect change (CDC) ***
+  *** → Nếu có thể, implement 1 ví dụ Incremental Load cho 1 Dimension ***
+
+─── 4.7. KIỂM TRA CHẤT LƯỢNG (QUALITY CHECKS) ──────────────────────────────
+
+  □ Đối soát số dòng: so sánh nguồn vs. DWH
+  □ Đối soát tổng doanh thu:
+      - Fact_Sales.net_revenue vs. stg_order_items (gross - discount)
+      - Fact_Return.returned_net_revenue vs. đơn trả trong Fact_Sales
+      - Fact_Customer_Snapshot (tháng 12/2025) vs. tổng Fact_Sales theo khách
+  □ THROW lỗi nếu độ đo bắt buộc bị NULL hoặc trùng độ hạt
+  □ Khối CATCH: ROLLBACK + thông báo lỗi
+
+─── 4.8. DATA FLOW & CONTROL FLOW (SSIS) ─────────────────────────────────────
+
+  *** ĐÂY LÀ PHẦN CẦN BỔ SUNG NẾU MUỐN ĐIỂM CAO ***
+
+  □ Nếu dùng SSIS (không chỉ T-SQL):
+      - Screenshot Control Flow (thứ tự các task)
+      - Screenshot Data Flow (source → transform → destination)
+      - Giải thích Lookup Transform, Derived Column, Conditional Split
+      - Logging & Error Handling trong SSIS
+
+  □ Nếu chỉ dùng T-SQL:
+      - Giải thích tại sao chọn T-SQL thay SSIS
+      - Đối chiếu cấu trúc script với Control Flow / Data Flow
+
+================================================================================
+TIÊU CHÍ 5: KỸ NĂNG TRẢ LỜI CÂU HỎI PHÂN TÍCH (SQL & MDX) (15 điểm) — G3
+================================================================================
+
+Mục tiêu: Viết truy vấn SQL/MDX chính xác, tối ưu, trả lời insight rõ ràng.
+
+─── 5.1. CÂU HỎI PHÂN TÍCH KINH DOANH ──────────────────────────────────────
+
+  Chuẩn bị ít nhất 15-18 câu hỏi phân tích, bao phủ toàn diện 7 quy trình:
+
+  ★ Sales Analytics (Fact_Sales):
+  □ Q1: Top 10 ngành hàng (category) và thương hiệu (brand) có biên lợi nhuận cao nhất?
+  □ Q2: Chiết khấu ảnh hưởng bao nhiêu đến biên đóng góp (contribution margin)?
+  □ Q3: Phân khúc khách hàng nào đóng góp doanh thu lớn nhất theo độ tuổi (age group)?
+  □ Q4: Xu hướng doanh thu theo quý/năm và mùa vụ (time series & season)?
+
+  ★ Order Fulfillment (Fact_Order_Fulfillment):
+  □ Q5: Kho (warehouse) & phương thức vận chuyển nào có tỷ lệ giao trễ cao nhất?
+  □ Q6: Số ngày trễ trung bình so với dự kiến (delivery variance) theo từng khu vực?
+  □ Q7: Chi phí vận chuyển chiếm bao nhiêu % trên tổng doanh thu thuần của đơn hàng?
+
+  ★ Return Analytics (Fact_Return):
+  □ Q8: Nhóm lý do trả hàng nào (Product Quality, Logistics, Customer Choice) gây thiệt hại lớn nhất?
+  □ Q9: Tỷ lệ hoàn trả hàng (return rate) phân bổ như thế nào theo phương thức vận chuyển và khu vực?
+
+  ★ Customer Feedback (Fact_Customer_Feedback):
+  □ Q10: Việc giao hàng trễ có làm điểm đánh giá (rating) giảm mạnh hay không?
+  □ Q11: Phân bổ cảm xúc đánh giá (Positive, Neutral, Negative) theo kênh bán hàng (sales channel)?
+
+  ★ Customer Acquisition (Fact_Customer_Acquisition):
+  □ Q12: Kênh marketing nào thu hút khách hàng mới với chi phí CAC thấp nhất?
+  □ Q13: Doanh thu đơn đầu tiên bù đắp được bao nhiêu % chi phí thu hút khách hàng (First Order Payback)?
+
+  ★ Customer Periodic Snapshot (Fact_Customer_Snapshot):
+  □ Q14: Có bao nhiêu khách hàng đã ngừng mua sắm quá 90 ngày (churn risk)?
+  □ Q15: Tỷ lệ khách hàng chuyển dịch giữa các hạng thành viên (Bronze, Silver, Gold, Platinum) qua từng tháng?
+  □ Q16: Khách hàng có điểm RFM cao (RFM = 4, 5) chiếm bao nhiêu % doanh thu định kỳ?
+
+  ★ Campaign & Promotion Analytics (Fact_Campaign_Promotion):
+  □ Q17: Chiến dịch khuyến mãi nào (campaign name) mang lại doanh thu thuần cao nhất?
+  □ Q18: Các đơn hàng có áp dụng mã coupon (is_coupon_order = 1) có giá trị đơn hàng trung bình cao hơn đơn không áp mã không?
+
+─── 5.2. TRUY VẤN SQL ────────────────────────────────────────────────────────
+
+  □ Viết truy vấn SQL trực tiếp trên DWH (EcommerceDW) cho từng câu hỏi nghiệp vụ.
+  □ Kỹ thuật truy vấn nâng cao:
+      - JOIN tối ưu giữa 7 Fact và 8 Dim (tận dụng Star Schema phẳng, ít JOIN).
+      - GROUP BY, HAVING, CASE WHEN pivot dữ liệu.
+      - Window Functions: ROW_NUMBER(), DENSE_RANK(), LAG(), LEAD(), SUM() OVER (PARTITION BY...).
+      - CTE (Common Table Expression) tái sử dụng bảng trung gian.
+      - Tính toán KPI động: Margin Rate, On-Time Delivery Rate, Return Loss Ratio.
+  □ Giải thích logic truy vấn, output dữ liệu, và rút ra Insight kinh doanh cho ban giám đốc.
+
+─── 5.3. TRUY VẤN MDX ────────────────────────────────────────────────────────
+
+  □ Viết truy vấn MDX trên SSAS Cube "Ecommerce DW" cho các chỉ số tương ứng.
+  □ Cú pháp & kỹ thuật:
+      - SELECT ... ON COLUMNS, ON ROWS FROM [Ecommerce DW].
+      - WHERE slicer theo Dim_Date hoặc Dim_Region.
+      - Điều hướng phân cấp: .Members, .Children, .Parent, .CurrentMember.
+      - Calculated Members: [Measures].[Contribution Margin Rate], [Measures].[On-Time Rate]...
+      - Hàm lọc & xếp hạng: Filter(), TopCount(), Order().
+      - Time Intelligence: YTD, ParallelPeriod, PeriodsToDate.
+  □ So sánh kết quả MDX trên Cube với SQL trên DWH (đối soát độ chính xác 100%).
+
+─── 5.4. SO SÁNH SQL vs MDX ──────────────────────────────────────────────────
+
+  □ Bảng đối chiếu chuyên sâu:
+      - Khả năng xử lý: SQL tính toán on-the-fly trên dòng; MDX truy vấn trên khối dữ liệu đã nén và pre-aggregated.
+      - Hiệu năng: MDX phản hồi trong vài mili-giây với khối dữ liệu triệu dòng; SQL phụ thuộc index và tài nguyên I/O.
+      - Trải nghiệm người dùng: MDX tích hợp kéo thả trong Excel PivotTable / Power BI; SQL cần viết code thủ công.
+
+================================================================================
+TIÊU CHÍ 6: TRẢ LỜI CÂU HỎI VỀ KHO DỮ LIỆU & GIẢI PHÁP (15 điểm) — G1,G3,G4
+================================================================================
+
+Mục tiêu: Nắm vững lý thuyết, giải thích kiến trúc và bảo vệ các quyết định thiết kế.
+
+─── 6.1. KIẾN TRÚC KHO DỮ LIỆU ─────────────────────────────────────────────
+
+  □ Phân biệt Database (OLTP) vs Data Warehouse (OLAP) vs Data Mart:
+      - OLTP: Thiết kế chuẩn 3NF, phục vụ ghi nhận giao dịch tức thời, nhiều bảng nhỏ.
+      - Data Warehouse: Thiết kế Dimensional (Star/Galaxy), tối ưu cho truy vấn đọc, báo cáo đa chiều.
+      - Dự án này: Enterprise Data Warehouse (EDW) đa phân hệ dựa trên kiến trúc Bus Architecture.
+
+  □ Kiến trúc tổng thể 4 tầng:
+      Source (CSV) → Staging Area (SQL Server) → Destination DWH (8 Dim + 7 Fact) → SSAS OLAP Cube.
+
+  □ Phương pháp luận Kimball vs Inmon:
+      - Inmon (Top-down): Xây dựng Enterprise DWH chuẩn 3NF trước rồi mới tạo Data Mart.
+      - Kimball (Bottom-up): Xây dựng Dimensional Data Warehouse dựa trên Business Process và Bus Matrix.
+      - Lý do chọn Kimball: Triển khai nhanh, bám sát nghiệp vụ e-commerce, dễ mở rộng quy trình mới.
+
+─── 6.2. MÔ HÌNH DỮ LIỆU ──────────────────────────────────────────────────
+
+  □ Star Schema vs Snowflake Schema vs Galaxy Schema:
+      - Star Schema: Khử chuẩn hóa (Denormalization), tất cả thuộc tính mô tả nằm trong 1 bảng Dim.
+      - Snowflake Schema: Chuẩn hóa bảng chiều thành nhiều cấp (ví dụ Category riêng, Brand riêng).
+      - Dự án này: Galaxy Schema kết hợp Star Schema khử chuẩn hóa:
+        + Tránh lỗi "fake dimension" 2 cột vô nghĩa (Category, Brand được denormalize vào Dim_Product).
+        + Dim_Customer tích hợp luôn phân khúc và địa chỉ.
+        + Áp dụng Junk Dimension (Dim_Order_Profile) cho 5 trạng thái cờ.
+
+  □ Các loại Fact Table được triển khai:
+      - Transaction Fact: Fact_Sales, Fact_Return, Fact_Customer_Feedback, Fact_Customer_Acquisition, Fact_Campaign_Promotion.
+      - Periodic Snapshot Fact: Fact_Customer_Snapshot (chụp trạng thái định kỳ cuối mỗi tháng).
+      - Accumulating Snapshot Fact: Fact_Order_Fulfillment (theo dõi vòng đời đơn qua 3 mốc ngày).
+
+  □ Các loại Dimension được triển khai:
+      - Conformed Dimension: Dim_Date, Dim_Customer, Dim_Region (chia sẻ giữa nhiều Fact).
+      - Role-Playing Dimension: Dim_Date (Order Date, Expected Delivery, Actual Delivery, Snapshot Date).
+      - Degenerate Dimension: order_id (mã chứng từ trong Fact, dùng kết nối drill-across).
+      - Junk Dimension: Dim_Order_Profile (gom các cờ phân loại nhỏ).
+
+─── 6.3. GIẢI PHÁP THIẾT KẾ CỤ THỂ & BIỆN LUẬN ─────────────────────────────
+
+  □ Giải thích các quyết định thiết kế:
+      1) Tại sao tách 7 Fact thay vì gom 1 Fact lớn?
+         → "Một quy trình nghiệp vụ, một độ hạt, một bảng Fact". Gom đơn và sản phẩm sẽ gây cộng trùng (double-counting).
+      2) Tại sao không lưu tỷ lệ (tỷ lệ chiết khấu, tỷ lệ giao đúng hạn) trong Fact?
+         → Trung bình của các tỷ lệ KHÔNG bằng tỷ lệ của các tổng. Fact chỉ lưu độ đo cơ sở (additive measures),
+           các tỷ lệ được tính toán trên SSAS Cube bằng Calculated Members.
+      3) Tại sao khử chuẩn hóa Category/Brand vào Dim_Product?
+         → Giảm số phép JOIN trong SQL, giúp Cube SSAS tạo Attribute Relationships phân cấp tự nhiên mà không cần snowflake views.
+      4) Tại sao dùng Junk Dimension cho trạng thái đơn?
+         → Gom 5 cờ (order_status, payment_method, payment_status, sales_channel, delivery_status) giúp Fact_Sales
+           tiết kiệm 4 cột foreign key, tối ưu kích thước lưu trữ và cache bộ nhớ.
+      5) Tại sao Fact_Return không có product_key?
+         → Dữ liệu nguồn ghi nhận đổi/trả hàng ở cấp độ đơn hàng (order-level). Gán đơn trả cho 1 sản phẩm sẽ gây thiên vị sai lệch.
+
+  □ Hướng mở rộng thực tế:
+      - Chuyển từ Full Reload sang Incremental Load bằng Change Data Capture (CDC) hoặc Watermark timestamp.
+      - Nâng cấp Dim_Customer lên SCD Type 2 nếu cần theo dõi lịch sử thay đổi phân khúc của khách hàng.
+
+─── 6.4. KHỐI PHÂN TÍCH OLAP CUBE TRÊN SSAS ─────────────────────────────────
+
+  □ Cấu trúc SSAS Project:
+      - Data Source: Kết nối trực tiếp cơ sở dữ liệu EcommerceDW.
+      - Data Source View (DSV): Thể hiện 8 Dimensions và 7 Fact Tables cùng mối quan hệ khóa ngoại.
+      - 7 Measure Groups tương ứng 7 bảng Fact.
+      - Dimension Usage: Cấu hình đúng ma trận Bus Matrix (Conformed, Role-Playing, Regular dimensions).
+      - Calculated Members: 20+ chỉ số KPI được định nghĩa bằng MDX.
+  □ Attribute Relationships & Hierarchy:
+      - Thiết lập quan hệ phân cấp cứng (Rigid Relationship): Key → Subcategory → Category; Key → State → Country.
+      - Thiết lập Composite Key (Khóa ghép) tránh gộp nhầm các thực thể trùng tên giữa các bang/nhánh.
+  □ Semi-Additive Measures:
+      - Trong Fact_Customer_Snapshot, các chỉ số lũy kế (cumulative revenue, cumulative points) sử dụng
+        hàm tập hợp LastNonEmpty theo chiều Dim_Date.
+
+================================================================================
+                         CHECKLIST TỔNG HỢP TRƯỚC KHI NỘP
+================================================================================
+
+  HÌNH THỨC (10đ):
+  □ Đủ cấu trúc: bìa, mục lục, danh mục, nội dung, kết luận, tài liệu
+  □ Diễn đạt mạch lạc, không lỗi chính tả
+  □ Có hình minh họa (sơ đồ ER, kiến trúc ETL, screenshot Cube)
+
+  LÀM VIỆC NHÓM (10đ):
+  □ Bảng phân công rõ ràng, có deadline, kết quả
+  □ Tự đánh giá sát thực tế
+
+  THIẾT KẾ KHO DỮ LIỆU (30đ):
+  □ Mô hình Star/Galaxy phù hợp bài toán (denormalized, Junk Dim)
+  □ Fact table: measure + grain rõ ràng (7 Fact × grain riêng)
+  □ Dimension: 8 Dim chất lượng, KHÔNG có Dim 2 cột vô nghĩa
+      - Dim_Product: denormalized (gộp category, brand, supplier)
+      - Dim_Customer: denormalized (gộp segment, geography)
+      - Dim_Order_Profile: Junk Dim (gộp 5 cờ trạng thái)
+      - Dim_Marketing_Campaign: multi-attribute + derived attributes
+      - Dim_Return_Profile: multi-attribute + reason_category
+  □ SCD đúng loại + hợp lý theo ngữ cảnh
+  □ Hierarchy rõ ràng, phục vụ tốt truy vấn phân tích
+  □ Thuộc tính suy ra (price_tier, age_group, channel_type...)
+
+  CÔNG CỤ ETL (20đ):
+  □ Pipeline ETL hoàn chỉnh: Extract → Transform → Load
+  □ Staging area rõ ràng
+  □ Transform: cleaning, mapping, business rules
+  □ Incremental Load hoặc giải thích + hướng mở rộng
+  □ Tối ưu: Lookup, staging, batch processing
+
+  TRUY VẤN SQL & MDX (15đ):
+  □ Ít nhất 10 câu hỏi phân tích kinh doanh
+  □ Truy vấn SQL chính xác, tối ưu, có insight
+  □ Truy vấn MDX trên Cube, dùng Calculated Members
+  □ So sánh SQL vs MDX
+
+  KIẾN THỨC KHO DỮ LIỆU (15đ):
+  □ Giải thích rõ kiến trúc (DW, Data Mart, ETL)
+  □ Giải pháp phù hợp thực tế
+  □ Trả lời được câu hỏi phản biện từ giảng viên
+
+================================================================================
+                     CÁC FILE HIỆN CÓ TRONG DỰ ÁN
+================================================================================
+
+  Đã có:
+  ✓ 01_Create_EcommerceDW_v2.sql   → DDL tạo DWH chuẩn tinh gọn (8 Dim + 7 Fact)
+  ✓ 02_ETL_EcommerceDW_v2.sql      → Pipeline ETL nạp dữ liệu từ Staging (T-SQL)
+  ✓ 03_Queries_SQL.sql             → Bộ 15 truy vấn SQL giải quyết bài toán kinh doanh
+  ✓ 04_Queries_MDX.mdx             → Bộ truy vấn MDX đa chiều trên SSAS Cube
+  ✓ OUTLINE_DU_AN_DWH.txt          → Đề cương toàn diện đối chiếu 6 tiêu chí Rubric
+  ✓ Bao_Cao_Tien_Do_EcommerceDW_v2.docx → Báo cáo tiến độ Word
+  ✓ 4 file CSV dữ liệu nguồn       → Trong thư mục du_lieu_csv/
+  ✓ Tài liệu tham khảo             → Trong thư mục tai_lieu_tham_khao/
+
+  Cần chuẩn bị để hoàn tất nộp bài & bảo vệ:
+  □ SSAS Multidimensional Project (Visual Studio - tạo Cube, Measure Groups, Hierarchies)
+  □ Chụp ảnh Screenshot kết quả chạy ETL (số lượng dòng từng bảng, đối soát doanh thu)
+  □ Chụp ảnh Screenshot SSAS Cube Browser (drill-down, slice & dice)
+  □ Sơ đồ ER Diagram (Galaxy Schema 8 Dim - 7 Fact)
+  □ Sơ đồ Kiến trúc 4 tầng ETL (Source → Staging → DWH → Cube)
+  □ Báo cáo cuối kỳ hoàn chỉnh (Word / xuất ra PDF)
+  □ Slide thuyết trình bảo vệ đồ án trước giảng viên
+
+================================================================================
+

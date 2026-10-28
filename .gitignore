@@ -1,0 +1,22 @@
+# Visual Studio & SSDT temp/cache/user files
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# SSIS & SSAS build outputs
+*.ispac
+*.asdatabase
+BuildLog.xml
+
+# System / OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary / Log files
+*.log
+
