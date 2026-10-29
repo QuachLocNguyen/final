@@ -1,23 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37628.2 d17.14
+VisualStudioVersion = 17.14.37824.6 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{D2ABAB84-BF74-430A-B69E-9DC6D40DDA17}") = "EcommerceDWProject", "EcommerceDWProject\EcommerceDWProject.dwproj", "{26488002-51C6-1ECD-3957-08EAF1D7F95B}"
+Project("{D2ABAB84-BF74-430A-B69E-9DC6D40DDA17}") = "Cube", "Cube.dwproj", "{EDD7A0E4-75EF-94D5-48A1-7B673E4BC2B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Development|Default = Development|Default
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{26488002-51C6-1ECD-3957-08EAF1D7F95B}.Development|Default.ActiveCfg = Development
-		{26488002-51C6-1ECD-3957-08EAF1D7F95B}.Development|Default.Build.0 = Development
-		{26488002-51C6-1ECD-3957-08EAF1D7F95B}.Development|Default.Deploy.0 = Development
+		{EDD7A0E4-75EF-94D5-48A1-7B673E4BC2B5}.Development|Default.ActiveCfg = Development
+		{EDD7A0E4-75EF-94D5-48A1-7B673E4BC2B5}.Development|Default.Build.0 = Development
+		{EDD7A0E4-75EF-94D5-48A1-7B673E4BC2B5}.Development|Default.Deploy.0 = Development
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E89297E8-A42E-418C-BDDC-272EB7A19941}
+		SolutionGuid = {382736D7-F4D7-402C-895E-A2EC472197E7}
 	EndGlobalSection
 EndGlobal

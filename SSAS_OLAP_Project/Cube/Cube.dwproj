@@ -3,65 +3,25 @@
   <SchemaVersion>9.0.2.10</SchemaVersion>
   <State>$base64$PFNvdXJjZUNvbnRyb2xJbmZvIHhtbG5zOnhzZD0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zOmRkbDI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDAzL2VuZ2luZS8yIiB4bWxuczpkZGwyXzI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDAzL2VuZ2luZS8yLzIiIHhtbG5zOmRkbDEwMF8xMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDA4L2VuZ2luZS8xMDAvMTAwIiB4bWxuczpkZGwyMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEwL2VuZ2luZS8yMDAiIHhtbG5zOmRkbDIwMF8yMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEwL2VuZ2luZS8yMDAvMjAwIiB4bWxuczpkZGwzMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDExL2VuZ2luZS8zMDAiIHhtbG5zOmRkbDMwMF8zMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDExL2VuZ2luZS8zMDAvMzAwIiB4bWxuczpkZGw0MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEyL2VuZ2luZS80MDAiIHhtbG5zOmRkbDQwMF80MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEyL2VuZ2luZS80MDAvNDAwIiB4bWxuczpkZGw1MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEzL2VuZ2luZS81MDAiIHhtbG5zOmRkbDUwMF81MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEzL2VuZ2luZS81MDAvNTAwIiB4bWxuczpkd2Q9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vRGF0YVdhcmVob3VzZS9EZXNpZ25lci8xLjAiPg0KICA8RW5hYmxlZD5mYWxzZTwvRW5hYmxlZD4NCiAgPFByb2plY3ROYW1lPjwvUHJvamVjdE5hbWU+DQogIDxBdXhQYXRoPjwvQXV4UGF0aD4NCiAgPExvY2FsUGF0aD48L0xvY2FsUGF0aD4NCiAgPFByb3ZpZGVyPjwvUHJvdmlkZXI+DQo8L1NvdXJjZUNvbnRyb2xJbmZvPg==</State>
   <Database>
-    <Name>EcommerceDWProject.database</Name>
-    <FullPath>EcommerceDWProject.database</FullPath>
+    <Name>Cube.database</Name>
+    <FullPath>Cube.database</FullPath>
   </Database>
-  <Cubes>
-    <ProjectItem>
-      <Name>Sales.cube</Name>
-      <FullPath>Sales.cube</FullPath>
-      <Dependencies>
-        <ProjectItem>
-          <Name>Sales.partitions</Name>
-          <FullPath>Sales.partitions</FullPath>
-        </ProjectItem>
-      </Dependencies>
-    </ProjectItem>
-  </Cubes>
   <Dimensions>
     <ProjectItem>
       <Name>Date.dim</Name>
       <FullPath>Date.dim</FullPath>
     </ProjectItem>
-    <ProjectItem>
-      <Name>Region.dim</Name>
-      <FullPath>Region.dim</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>Payment Method.dim</Name>
-      <FullPath>Payment Method.dim</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>Product.dim</Name>
-      <FullPath>Product.dim</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>Customer.dim</Name>
-      <FullPath>Customer.dim</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>Sales Channel.dim</Name>
-      <FullPath>Sales Channel.dim</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>Channel.dim</Name>
-      <FullPath>Channel.dim</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>Order Status.dim</Name>
-      <FullPath>Order Status.dim</FullPath>
-    </ProjectItem>
   </Dimensions>
   <DataSources>
     <ProjectItem>
-      <Name>E Commerce DW.ds</Name>
-      <FullPath>E Commerce DW.ds</FullPath>
+      <Name>EcommerceDW.ds</Name>
+      <FullPath>EcommerceDW.ds</FullPath>
     </ProjectItem>
   </DataSources>
   <DataSourceViews>
     <ProjectItem>
-      <Name>E Commerce DW.dsv</Name>
-      <FullPath>E Commerce DW.dsv</FullPath>
+      <Name>Ecommerce DW.dsv</Name>
+      <FullPath>Ecommerce DW.dsv</FullPath>
     </ProjectItem>
   </DataSourceViews>
   <Configurations>
@@ -70,15 +30,15 @@
       <Options>
         <ConnectionMappings>
           <ConfigurationSetting>
-            <Id>E Commerce DW</Id>
-            <Name>E Commerce DW</Name>
-            <Value xsi:type="xsd:string">Provider=MSOLEDBSQL.1;Data Source=localhost;Integrated Security=SSPI;Initial Catalog=ECommerceDW</Value>
+            <Id>EcommerceDW</Id>
+            <Name>EcommerceDW</Name>
+            <Value xsi:type="xsd:string">Provider=MSOLEDBSQL.1;Data Source=.\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=EcommerceDW</Value>
           </ConfigurationSetting>
         </ConnectionMappings>
         <ConnectionSecurityMappings>
           <ConfigurationSetting>
-            <Id>E Commerce DW</Id>
-            <Name>E Commerce DW</Name>
+            <Id>EcommerceDW</Id>
+            <Name>EcommerceDW</Name>
             <Value xsi:type="xsd:int">0</Value>
           </ConfigurationSetting>
         </ConnectionSecurityMappings>

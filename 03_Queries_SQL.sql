@@ -85,7 +85,7 @@ SELECT
     COUNT(DISTINCT fs.order_id) AS total_orders,
     SUM(fs.net_revenue) AS total_net_revenue,
     ROUND(SUM(fs.net_revenue) * 100.0 / SUM(SUM(fs.net_revenue)) OVER (), 2) AS revenue_share_pct,
-    ROUND(SUM(fs.net_revenue) / NULLIF(COUNT(DISTINCT fs.order_id), 0), 2) AS avg_order_value (AOV)
+    ROUND(SUM(fs.net_revenue) / NULLIF(COUNT(DISTINCT fs.order_id), 0), 2) AS avg_order_value_AOV
 FROM dbo.Fact_Sales fs
 INNER JOIN dbo.Dim_Customer c ON fs.customer_key = c.customer_key
 GROUP BY c.customer_segment, c.age_group
