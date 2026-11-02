@@ -12,8 +12,8 @@
   DTS:ObjectName="Package"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="34"
-  DTS:VersionGUID="{9B0EA32E-AD39-4E6E-A315-10F08C86B9FE}">
+  DTS:VersionBuild="38"
+  DTS:VersionGUID="{BB2673F6-953E-428E-87C1-E81B63146E1B}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -9065,6 +9065,109 @@ WHERE shipping_method IS NOT NULL AND warehouse IS NOT NULL;</property>
               version="1">
               <components>
                 <component
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split"
+                  componentClassID="Microsoft.ConditionalSplit"
+                  contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+                  name="Conditional Split"
+                  usesDispositions="true">
+                  <inputs>
+                    <input
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Inputs[Conditional Split Input]"
+                      description="Input to the Conditional Split Transformation"
+                      name="Conditional Split Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Inputs[Conditional Split Input].Columns[quantity]"
+                          cachedDataType="i4"
+                          cachedName="quantity"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[quantity]" />
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Inputs[Conditional Split Input].Columns[gross_sales]"
+                          cachedDataType="numeric"
+                          cachedName="gross_sales"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[gross_sales]" />
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Inputs[Conditional Split Input].Columns[discount_amount]"
+                          cachedDataType="numeric"
+                          cachedName="discount_amount"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[discount_amount]" />
+                      </inputColumns>
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Outputs[Invalid_Sales_Data]"
+                      description="Output 1 of the Conditional Split Transformation"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      exclusionGroup="1"
+                      name="Invalid_Sales_Data"
+                      synchronousInputId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Inputs[Conditional Split Input]"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                          name="Expression">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[quantity]} &lt;= 0 || #{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[discount_amount]} &gt; #{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[gross_sales]} || #{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[gross_sales]} &lt; 0</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Specifies the friendly version of the expression. This expression version uses column names."
+                          expressionType="Notify"
+                          name="FriendlyExpression">quantity &lt;= 0 || discount_amount &gt; gross_sales || gross_sales &lt; 0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                          name="EvaluationOrder">0</property>
+                      </properties>
+                      <externalMetadataColumns />
+                    </output>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Outputs[Valid_Sales_Data]"
+                      description="Default Output of the Conditional Split Transformation"
+                      exclusionGroup="1"
+                      name="Valid_Sales_Data"
+                      synchronousInputId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Inputs[Conditional Split Input]">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          name="IsDefaultOut">true</property>
+                      </properties>
+                      <externalMetadataColumns />
+                    </output>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Outputs[Conditional Split Error Output]"
+                      description="Error Output of the Conditional Split Transformation"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="Conditional Split Error Output"
+                      synchronousInputId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Inputs[Conditional Split Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
                   refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer"
                   componentClassID="Microsoft.Lookup"
                   contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
@@ -9216,6 +9319,538 @@ where [refTable].[customer_id] = ?</property>
                           refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer.Outputs[Lookup Error Output].Columns[ErrorColumn]"
                           dataType="i4"
                           lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column"
+                  componentClassID="Microsoft.DerivedColumn"
+                  contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+                  name="Derived Column"
+                  usesDispositions="true">
+                  <inputs>
+                    <input
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Inputs[Derived Column Input]"
+                      description="Input to the Derived Column Transformation"
+                      name="Derived Column Input">
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Output]"
+                      description="Default Output of the Derived Column Transformation"
+                      exclusionGroup="1"
+                      name="Derived Column Output"
+                      synchronousInputId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Inputs[Derived Column Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Output].Columns[reject_rule]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Computation"
+                          errorRowDisposition="FailComponent"
+                          length="23"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Output].Columns[reject_rule]"
+                          name="reject_rule"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Expression"
+                              name="Expression">"RULE_BUSINESS_VIOLATION"</property>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Friendly Expression"
+                              expressionType="Notify"
+                              name="FriendlyExpression">"RULE_BUSINESS_VIOLATION"</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Output].Columns[error_message]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Computation"
+                          errorRowDisposition="FailComponent"
+                          length="45"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Output].Columns[error_message]"
+                          name="error_message"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Expression"
+                              name="Expression">"Invalid quantity or excessive discount amount"</property>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Friendly Expression"
+                              expressionType="Notify"
+                              name="FriendlyExpression">"Invalid quantity or excessive discount amount"</property>
+                          </properties>
+                        </outputColumn>
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Error Output]"
+                      description="Error Output of the Derived Column Transformation"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="Derived Column Error Output"
+                      synchronousInputId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Inputs[Derived Column Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1"
+                  componentClassID="Microsoft.DerivedColumn"
+                  contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+                  name="Derived Column 1"
+                  usesDispositions="true">
+                  <inputs>
+                    <input
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Inputs[Derived Column Input]"
+                      description="Input to the Derived Column Transformation"
+                      name="Derived Column Input">
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Output]"
+                      description="Default Output of the Derived Column Transformation"
+                      exclusionGroup="1"
+                      name="Derived Column Output"
+                      synchronousInputId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Inputs[Derived Column Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Output].Columns[reject_rule]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Computation"
+                          errorRowDisposition="FailComponent"
+                          length="19"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Output].Columns[reject_rule]"
+                          name="reject_rule"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Expression"
+                              name="Expression">"RULE_ORPHAN_PRODUCT"</property>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Friendly Expression"
+                              expressionType="Notify"
+                              name="FriendlyExpression">"RULE_ORPHAN_PRODUCT"</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Output].Columns[error_message]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Computation"
+                          errorRowDisposition="FailComponent"
+                          length="40"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Output].Columns[error_message]"
+                          name="error_message"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Expression"
+                              name="Expression">"Product ID does not exist in Dim_Product"</property>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Friendly Expression"
+                              expressionType="Notify"
+                              name="FriendlyExpression">"Product ID does not exist in Dim_Product"</property>
+                          </properties>
+                        </outputColumn>
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Error Output]"
+                      description="Error Output of the Derived Column Transformation"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="Derived Column Error Output"
+                      synchronousInputId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Inputs[Derived Column Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2"
+                  componentClassID="Microsoft.DerivedColumn"
+                  contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+                  name="Derived Column 2"
+                  usesDispositions="true">
+                  <inputs>
+                    <input
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Inputs[Derived Column Input]"
+                      description="Input to the Derived Column Transformation"
+                      name="Derived Column Input">
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Output]"
+                      description="Default Output of the Derived Column Transformation"
+                      exclusionGroup="1"
+                      name="Derived Column Output"
+                      synchronousInputId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Inputs[Derived Column Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Output].Columns[reject_rule]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Computation"
+                          errorRowDisposition="FailComponent"
+                          length="20"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Output].Columns[reject_rule]"
+                          name="reject_rule"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Expression"
+                              name="Expression">"RULE_ORPHAN_CUSTOMER"</property>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Friendly Expression"
+                              expressionType="Notify"
+                              name="FriendlyExpression">"RULE_ORPHAN_CUSTOMER"</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Output].Columns[error_message]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Computation"
+                          errorRowDisposition="FailComponent"
+                          length="42"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Output].Columns[error_message]"
+                          name="error_message"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Expression"
+                              name="Expression">"Customer ID does not exist in Dim_Customer"</property>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Friendly Expression"
+                              expressionType="Notify"
+                              name="FriendlyExpression">"Customer ID does not exist in Dim_Customer"</property>
+                          </properties>
+                        </outputColumn>
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Error Output]"
+                      description="Error Output of the Derived Column Transformation"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="Derived Column Error Output"
+                      synchronousInputId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Inputs[Derived Column Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="DEST_Error_Data_Log"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[dbo].[Error_Data_Log]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">true</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">2147483647</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[MSI\SQLEXPRESS.EcommerceDW]"
+                      connectionManagerRefId="Package.ConnectionManagers[MSI\SQLEXPRESS.EcommerceDW]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].Columns[customer_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="customer_id"
+                          externalMetadataColumnId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[customer_id]"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[customer_id]" />
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].Columns[quantity]"
+                          cachedDataType="i4"
+                          cachedName="quantity"
+                          externalMetadataColumnId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[quantity]"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[quantity]" />
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].Columns[gross_sales]"
+                          cachedDataType="numeric"
+                          cachedName="gross_sales"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          externalMetadataColumnId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[gross_sales]"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[gross_sales]" />
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].Columns[discount_amount]"
+                          cachedDataType="numeric"
+                          cachedName="discount_amount"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          externalMetadataColumnId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[discount_amount]"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[discount_amount]" />
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].Columns[net_revenue]"
+                          cachedDataType="numeric"
+                          cachedName="net_revenue"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          externalMetadataColumnId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[net_revenue]"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[net_revenue]" />
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].Columns[order_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="order_id"
+                          externalMetadataColumnId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[order_id]"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_id]" />
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].Columns[product_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="product_id"
+                          externalMetadataColumnId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[product_id]"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_id]" />
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].Columns[reject_rule]"
+                          cachedDataType="wstr"
+                          cachedLength="19"
+                          cachedName="reject_rule"
+                          externalMetadataColumnId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[reject_rule]"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[reject_rule]" />
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].Columns[error_message]"
+                          cachedDataType="wstr"
+                          cachedLength="40"
+                          cachedName="error_message"
+                          externalMetadataColumnId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[error_message]"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[error_message]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[error_id]"
+                          dataType="i8"
+                          name="error_id" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[order_id]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="order_id" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[product_id]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="product_id" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[customer_id]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="customer_id" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[order_date]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="order_date" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[quantity]"
+                          dataType="i4"
+                          name="quantity" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[unit_price]"
+                          dataType="numeric"
+                          name="unit_price"
+                          precision="18"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[gross_sales]"
+                          dataType="numeric"
+                          name="gross_sales"
+                          precision="18"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[discount_amount]"
+                          dataType="numeric"
+                          name="discount_amount"
+                          precision="18"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[net_revenue]"
+                          dataType="numeric"
+                          name="net_revenue"
+                          precision="18"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[reject_rule]"
+                          dataType="wstr"
+                          length="100"
+                          name="reject_rule" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[error_message]"
+                          dataType="wstr"
+                          length="255"
+                          name="error_message" />
+                        <externalMetadataColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input].ExternalColumns[logged_at]"
+                          dataType="dbTimeStamp"
+                          name="logged_at" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                           name="ErrorColumn"
                           specialFlags="2" />
                       </outputColumns>
@@ -10027,7 +10662,7 @@ where [refTable].[product_id] = ?</property>
                       containsID="true"
                       dataType="System.String"
                       description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
-                      name="ParameterMap">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\20:invalid};</property>
+                      name="ParameterMap">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[product_id]};</property>
                     <property
                       dataType="System.Int32"
                       description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -10129,23 +10764,892 @@ where [refTable].[product_id] = ?</property>
                     </output>
                   </outputs>
                 </component>
+                <component
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All"
+                  componentClassID="Microsoft.UnionAll"
+                  contactInfo="Union All;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+                  description="Combines rows from multiple data flows without sorting. For example, add rows back to a data flow after correction of errors. If sorting is important, we recommend using the Merge transformation."
+                  name="Union All"
+                  version="1">
+                  <inputs>
+                    <input
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1]"
+                      name="Union All Input 1">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[customer_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="customer_id"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[customer_id]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[customer_id]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[date_key]"
+                          cachedDataType="i4"
+                          cachedName="date_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[date_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[date_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[region_key]"
+                          cachedDataType="i4"
+                          cachedName="region_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[region_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[region_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[order_profile_key]"
+                          cachedDataType="i4"
+                          cachedName="order_profile_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[order_profile_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_profile_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[marketing_key]"
+                          cachedDataType="i4"
+                          cachedName="marketing_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[marketing_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[marketing_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[quantity]"
+                          cachedDataType="i4"
+                          cachedName="quantity"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[quantity]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[quantity]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[gross_sales]"
+                          cachedDataType="numeric"
+                          cachedName="gross_sales"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[gross_sales]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[gross_sales]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[discount_amount]"
+                          cachedDataType="numeric"
+                          cachedName="discount_amount"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[discount_amount]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[discount_amount]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[tax_amount]"
+                          cachedDataType="numeric"
+                          cachedName="tax_amount"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[tax_amount]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[tax_amount]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[net_revenue]"
+                          cachedDataType="numeric"
+                          cachedName="net_revenue"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[net_revenue]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[net_revenue]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[product_cost]"
+                          cachedDataType="numeric"
+                          cachedName="product_cost"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[product_cost]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_cost]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[shipping_cost_allocated]"
+                          cachedDataType="numeric"
+                          cachedName="shipping_cost_allocated"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[shipping_cost_allocated]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[shipping_cost_allocated]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[contribution_margin]"
+                          cachedDataType="numeric"
+                          cachedName="contribution_margin"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[contribution_margin]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[contribution_margin]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[order_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="order_id"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[order_id]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_id]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[product_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="product_id"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[product_id]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_id]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[reject_rule]"
+                          cachedDataType="wstr"
+                          cachedLength="19"
+                          cachedName="reject_rule"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Output].Columns[reject_rule]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[reject_rule]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1].Columns[error_message]"
+                          cachedDataType="wstr"
+                          cachedLength="40"
+                          cachedName="error_message"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Output].Columns[error_message]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[error_message]}</property>
+                          </properties>
+                        </inputColumn>
+                      </inputColumns>
+                      <externalMetadataColumns />
+                    </input>
+                    <input
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2]"
+                      hasSideEffects="true"
+                      name="Union All Input 2">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[customer_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="customer_id"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[customer_id]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[customer_id]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[date_key]"
+                          cachedDataType="i4"
+                          cachedName="date_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[date_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[date_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[region_key]"
+                          cachedDataType="i4"
+                          cachedName="region_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[region_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[region_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[order_profile_key]"
+                          cachedDataType="i4"
+                          cachedName="order_profile_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[order_profile_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_profile_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[marketing_key]"
+                          cachedDataType="i4"
+                          cachedName="marketing_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[marketing_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[marketing_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[quantity]"
+                          cachedDataType="i4"
+                          cachedName="quantity"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[quantity]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[quantity]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[gross_sales]"
+                          cachedDataType="numeric"
+                          cachedName="gross_sales"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[gross_sales]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[gross_sales]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[discount_amount]"
+                          cachedDataType="numeric"
+                          cachedName="discount_amount"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[discount_amount]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[discount_amount]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[tax_amount]"
+                          cachedDataType="numeric"
+                          cachedName="tax_amount"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[tax_amount]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[tax_amount]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[net_revenue]"
+                          cachedDataType="numeric"
+                          cachedName="net_revenue"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[net_revenue]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[net_revenue]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[product_cost]"
+                          cachedDataType="numeric"
+                          cachedName="product_cost"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[product_cost]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_cost]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[shipping_cost_allocated]"
+                          cachedDataType="numeric"
+                          cachedName="shipping_cost_allocated"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[shipping_cost_allocated]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[shipping_cost_allocated]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[contribution_margin]"
+                          cachedDataType="numeric"
+                          cachedName="contribution_margin"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[contribution_margin]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[contribution_margin]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[order_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="order_id"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[order_id]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_id]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2].Columns[product_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="product_id"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[product_id]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_id]}</property>
+                          </properties>
+                        </inputColumn>
+                      </inputColumns>
+                      <externalMetadataColumns />
+                    </input>
+                    <input
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3]"
+                      hasSideEffects="true"
+                      name="Union All Input 3">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[customer_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="customer_id"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[customer_id]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[customer_id]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[date_key]"
+                          cachedDataType="i4"
+                          cachedName="date_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[date_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[date_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[region_key]"
+                          cachedDataType="i4"
+                          cachedName="region_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[region_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[region_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[order_profile_key]"
+                          cachedDataType="i4"
+                          cachedName="order_profile_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[order_profile_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_profile_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[marketing_key]"
+                          cachedDataType="i4"
+                          cachedName="marketing_key"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[marketing_key]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[marketing_key]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[quantity]"
+                          cachedDataType="i4"
+                          cachedName="quantity"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[quantity]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[quantity]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[gross_sales]"
+                          cachedDataType="numeric"
+                          cachedName="gross_sales"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[gross_sales]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[gross_sales]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[discount_amount]"
+                          cachedDataType="numeric"
+                          cachedName="discount_amount"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[discount_amount]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[discount_amount]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[tax_amount]"
+                          cachedDataType="numeric"
+                          cachedName="tax_amount"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[tax_amount]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[tax_amount]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[net_revenue]"
+                          cachedDataType="numeric"
+                          cachedName="net_revenue"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[net_revenue]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[net_revenue]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[product_cost]"
+                          cachedDataType="numeric"
+                          cachedName="product_cost"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[product_cost]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_cost]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[shipping_cost_allocated]"
+                          cachedDataType="numeric"
+                          cachedName="shipping_cost_allocated"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[shipping_cost_allocated]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[shipping_cost_allocated]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[contribution_margin]"
+                          cachedDataType="numeric"
+                          cachedName="contribution_margin"
+                          cachedPrecision="18"
+                          cachedScale="4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[contribution_margin]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[contribution_margin]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[order_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="order_id"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[order_id]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_id]}</property>
+                          </properties>
+                        </inputColumn>
+                        <inputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3].Columns[product_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="product_id"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output].Columns[product_id]">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Output column lineage ID"
+                              name="OutputColumnLineageID">#{Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_id]}</property>
+                          </properties>
+                        </inputColumn>
+                      </inputColumns>
+                      <externalMetadataColumns />
+                    </input>
+                    <input
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 4]"
+                      dangling="true"
+                      hasSideEffects="true"
+                      name="Union All Input 4">
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1]"
+                      name="Union All Output 1">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[customer_id]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[customer_id]"
+                          name="customer_id" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[date_key]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[date_key]"
+                          name="date_key" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[region_key]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[region_key]"
+                          name="region_key" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_profile_key]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_profile_key]"
+                          name="order_profile_key" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[marketing_key]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[marketing_key]"
+                          name="marketing_key" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[quantity]"
+                          dataType="i4"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[quantity]"
+                          name="quantity" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[gross_sales]"
+                          dataType="numeric"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[gross_sales]"
+                          name="gross_sales"
+                          precision="18"
+                          scale="4" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[discount_amount]"
+                          dataType="numeric"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[discount_amount]"
+                          name="discount_amount"
+                          precision="18"
+                          scale="4" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[tax_amount]"
+                          dataType="numeric"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[tax_amount]"
+                          name="tax_amount"
+                          precision="18"
+                          scale="4" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[net_revenue]"
+                          dataType="numeric"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[net_revenue]"
+                          name="net_revenue"
+                          precision="18"
+                          scale="4" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_cost]"
+                          dataType="numeric"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_cost]"
+                          name="product_cost"
+                          precision="18"
+                          scale="4" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[shipping_cost_allocated]"
+                          dataType="numeric"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[shipping_cost_allocated]"
+                          name="shipping_cost_allocated"
+                          precision="18"
+                          scale="4" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[contribution_margin]"
+                          dataType="numeric"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[contribution_margin]"
+                          name="contribution_margin"
+                          precision="18"
+                          scale="4" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_id]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[order_id]"
+                          name="order_id" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_id]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[product_id]"
+                          name="product_id" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[reject_rule]"
+                          dataType="wstr"
+                          length="19"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[reject_rule]"
+                          name="reject_rule" />
+                        <outputColumn
+                          refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[error_message]"
+                          dataType="wstr"
+                          length="40"
+                          lineageId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1].Columns[error_message]"
+                          name="error_message" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
               </components>
               <paths>
                 <path
-                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup Match Output]"
-                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer.Inputs[Lookup Input]"
-                  name="Lookup Match Output"
-                  startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Product.Outputs[Lookup Match Output]" />
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Derived Column Output]"
+                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 1]"
+                  name="Derived Column Output"
+                  startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Outputs[Derived Column Output]" />
                 <path
-                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup Match Output1]"
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Derived Column Output1]"
+                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 2]"
+                  name="Derived Column Output"
+                  startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Outputs[Derived Column Output]" />
+                <path
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Derived Column Output2]"
+                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Inputs[Union All Input 3]"
+                  name="Derived Column Output"
+                  startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Outputs[Derived Column Output]" />
+                <path
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Invalid_Sales_Data]"
+                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column.Inputs[Derived Column Input]"
+                  name="Invalid_Sales_Data"
+                  startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Outputs[Invalid_Sales_Data]" />
+                <path
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup Match Output]"
                   endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Destination.Inputs[OLE DB Destination Input]"
                   name="Lookup Match Output"
                   startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer.Outputs[Lookup Match Output]" />
                 <path
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup Match Output1]"
+                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer.Inputs[Lookup Input]"
+                  name="Lookup Match Output"
+                  startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Product.Outputs[Lookup Match Output]" />
+                <path
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup No Match Output]"
+                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1.Inputs[Derived Column Input]"
+                  name="Lookup No Match Output"
+                  startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Product.Outputs[Lookup No Match Output]" />
+                <path
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup No Match Output1]"
+                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2.Inputs[Derived Column Input]"
+                  name="Lookup No Match Output"
+                  startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer.Outputs[Lookup No Match Output]" />
+                <path
                   refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[OLE DB Source Output]"
-                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Product.Inputs[Lookup Input]"
+                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Inputs[Conditional Split Input]"
                   name="OLE DB Source Output"
                   startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source.Outputs[OLE DB Source Output]" />
+                <path
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Union All Output 1]"
+                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log.Inputs[OLE DB Destination Input]"
+                  name="Union All Output 1"
+                  startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All.Outputs[Union All Output 1]" />
+                <path
+                  refId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Valid_Sales_Data]"
+                  endId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Product.Inputs[Lookup Input]"
+                  name="Valid_Sales_Data"
+                  startId="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split.Outputs[Valid_Sales_Data]" />
               </paths>
             </pipeline>
           </DTS:ObjectData>
@@ -10253,37 +11757,37 @@ where [refTable].[product_id] = ?</property>
           Id="Package\02_Extract_CSV_To_Staging"
           TopLeft="27.6190476778411,302.313725225206" />
         <NodeLayout
-          Size="192,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product"
-          TopLeft="53.2952389426786,74.7346404195015" />
-        <NodeLayout
-          Size="177.6,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\SQL_Load_Dim_Date"
-          TopLeft="53.0571437040762,10.6352940157623" />
-        <NodeLayout
           Size="200.8,41.6"
           Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Customer"
           TopLeft="50.7714294731007,135.401307032991" />
-        <NodeLayout
-          Size="188.8,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region"
-          TopLeft="51.9154892742735,184.529763505222" />
-        <NodeLayout
-          Size="196.8,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping"
-          TopLeft="301.551281595514,6.49193091733021" />
-        <NodeLayout
-          Size="218.4,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile"
-          TopLeft="303.383150740287,70.2702866749944" />
         <NodeLayout
           Size="255.2,41.6"
           Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Marketing_Compaign"
           TopLeft="308.694506062948,128.891704425275" />
         <NodeLayout
+          Size="218.4,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile"
+          TopLeft="303.383150740287,70.2702866749944" />
+        <NodeLayout
+          Size="192,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product"
+          TopLeft="53.2952389426786,74.7346404195015" />
+        <NodeLayout
+          Size="188.8,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region"
+          TopLeft="51.9154892742735,184.529763505222" />
+        <NodeLayout
           Size="223.2,41.6"
           Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Return_Profile"
           TopLeft="308.890477085897,186.370588054315" />
+        <NodeLayout
+          Size="196.8,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping"
+          TopLeft="301.551281595514,6.49193091733021" />
+        <NodeLayout
+          Size="177.6,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\SQL_Load_Dim_Date"
+          TopLeft="53.0571437040762,10.6352940157623" />
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
@@ -10291,50 +11795,6 @@ where [refTable].[product_id] = ?</property>
           Size="591.2,304"
           Id="Package\03_Transform_And_Load_Dimensions"
           TopLeft="444.904762834818,138.823529313455" />
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="369.219047677841,290.356862650586">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="75.6857151569765,0"
-              Start="0,0"
-              End="68.1857151569765,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="68.1857151569765,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="200.219047688485,241.399999874655">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,60.9137253505516"
-              Start="0,0"
-              End="0,53.4137253505516">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,53.4137253505516" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
         <NodeLayout
           Size="181.6,41.6"
           Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales"
@@ -10372,6 +11832,50 @@ where [refTable].[product_id] = ?</property>
           Size="575.2,144"
           Id="Package\04_Load_Fact_Tables"
           TopLeft="440.178572365596,527.671568311016" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="200.219047688485,241.399999874655">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60.9137253505516"
+              Start="0,0"
+              End="0,53.4137253505516">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,53.4137253505516" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="369.219047677841,290.356862650586">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="75.6857151569765,0"
+              Start="0,0"
+              End="68.1857151569765,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="68.1857151569765,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
           TopLeft="740.504762834818,442.823529313455">
@@ -10618,122 +12122,6 @@ where [refTable].[product_id] = ?</property>
     </Properties>
   </PipelineComponentMetadata>
   <TaskHost
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="149.6,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\OLE DB Source"
-          TopLeft="40.0000000851495,21.4117646871141" />
-        <NodeLayout
-          Size="152.8,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\Derived Column"
-          TopLeft="41.9999993741512,101.999998480082" />
-        <EdgeLayout
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product.Paths[OLE DB Source Output]"
-          TopLeft="116.59999972965,63.0117646871141">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,38.9882337929675"
-              Start="0,0"
-              End="0,31.4882337929675">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,31.4882337929675" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <NodeLayout
-          Size="155.2,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\Data Conversion"
-          TopLeft="47.5000002682209,188.499998167157" />
-        <EdgeLayout
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product.Paths[Derived Column Output]"
-          TopLeft="121.749999821186,143.599998480082">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,44.8999996870756"
-              Start="0,0"
-              End="0,37.3999996870756">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,37.3999996870756" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <NodeLayout
-          Size="170.4,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\OLE DB Destination"
-          TopLeft="316.999995276332,187.999997198582" />
-        <EdgeLayout
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product.Paths[Data Conversion Output]"
-          TopLeft="202.700000268221,209.04999768287">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="114.299995008111,0"
-              Start="0,0"
-              End="106.799995008111,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="106.799995008111,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </TaskHost>
-  <PipelineComponentMetadata
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\OLE DB Source">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\OLE DB Destination">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <TaskHost
     design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Customer">
     <LayoutInfo>
       <GraphLayout
@@ -10824,19 +12212,6 @@ where [refTable].[product_id] = ?</property>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Customer\OLE DB Destination">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
     design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Customer\OLE DB Source">
     <Properties>
       <Property>
@@ -10844,276 +12219,8 @@ where [refTable].[product_id] = ?</property>
       </Property>
     </Properties>
   </PipelineComponentMetadata>
-  <TaskHost
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="170.4,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region\OLE DB Destination"
-          TopLeft="372.499994531274,180.499997392297" />
-        <NodeLayout
-          Size="149.6,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region\OLE DB Source"
-          TopLeft="65.5,65.5" />
-        <NodeLayout
-          Size="155.2,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region\Data Conversion"
-          TopLeft="56.5000005811453,176.499998793006" />
-        <EdgeLayout
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region.Paths[OLE DB Source Output]"
-          TopLeft="137.200000290573,107.1">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,69.3999987930059"
-              Start="0,0"
-              End="0,61.8999987930059">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,61.8999987930059" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region.Paths[Data Conversion Output]"
-          TopLeft="211.700000581145,199.299998092651">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="160.799993950129,0"
-              Start="0,0"
-              End="153.299993950129,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="153.299993950129,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region\OLE DB Destination">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region\OLE DB Source">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <TaskHost
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="149.6,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\OLE DB Source"
-          TopLeft="36.9999994486571,57.9999991357327" />
-        <NodeLayout
-          Size="152.8,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\Derived Column"
-          TopLeft="41.4285708112376,159.999997615814" />
-        <EdgeLayout
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping.Paths[OLE DB Source Output]"
-          TopLeft="114.814285129947,99.5999991357327">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,60.3999984800815"
-              Start="0,0"
-              End="0,52.8999984800815">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.8999984800815" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <NodeLayout
-          Size="155.2,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\Data Conversion"
-          TopLeft="268.357139834336,155.719778875401" />
-        <EdgeLayout
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping.Paths[Derived Column Output]"
-          TopLeft="194.228570811238,178.659888245607">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="74.1285690230982,0"
-              Start="0,0"
-              End="66.6285690230982,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="66.6285690230982,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <NodeLayout
-          Size="170.4,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\OLE DB Destination"
-          TopLeft="483.961531331906,154.730767007057" />
-        <EdgeLayout
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping.Paths[Data Conversion Output]"
-          TopLeft="423.557139834336,176.025272941229">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="60.4043914975701,0"
-              Start="0,0"
-              End="52.9043914975701,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="52.9043914975701,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </TaskHost>
-  <PipelineComponentMetadata
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\OLE DB Source">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\OLE DB Destination">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <TaskHost
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="149.6,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile\OLE DB Source"
-          TopLeft="55.499999254942,36.499999538064" />
-        <NodeLayout
-          Size="170.4,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile\OLE DB Destination"
-          TopLeft="334.499995544553,128.499998614192" />
-        <NodeLayout
-          Size="155.2,41.6"
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile\Data Conversion"
-          TopLeft="53.5000001788139,129.499999046326" />
-        <EdgeLayout
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile.Paths[OLE DB Source Output]"
-          TopLeft="130.699999716878,78.099999538064">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,51.3999995082617"
-              Start="0,0"
-              End="0,43.8999995082617">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,43.8999995082617" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile.Paths[Data Conversion Output]"
-          TopLeft="208.700000178814,149.799998830259">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="125.799995365739,0"
-              Start="0,0"
-              End="118.299995365739,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="118.299995365739,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </TaskHost>
-  <PipelineComponentMetadata
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile\OLE DB Source">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile\OLE DB Destination">
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Customer\OLE DB Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -11237,6 +12344,292 @@ where [refTable].[product_id] = ?</property>
     </Properties>
   </PipelineComponentMetadata>
   <TaskHost
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="149.6,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile\OLE DB Source"
+          TopLeft="55.499999254942,36.499999538064" />
+        <NodeLayout
+          Size="170.4,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile\OLE DB Destination"
+          TopLeft="334.499995544553,128.499998614192" />
+        <NodeLayout
+          Size="155.2,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile\Data Conversion"
+          TopLeft="53.5000001788139,129.499999046326" />
+        <EdgeLayout
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile.Paths[OLE DB Source Output]"
+          TopLeft="130.699999716878,78.099999538064">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,51.3999995082617"
+              Start="0,0"
+              End="0,43.8999995082617">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,43.8999995082617" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile.Paths[Data Conversion Output]"
+          TopLeft="208.700000178814,149.799998830259">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="125.799995365739,0"
+              Start="0,0"
+              End="118.299995365739,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="118.299995365739,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Order_Profile\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="149.6,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\OLE DB Source"
+          TopLeft="40.0000000851495,21.4117646871141" />
+        <NodeLayout
+          Size="152.8,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\Derived Column"
+          TopLeft="41.9999993741512,101.999998480082" />
+        <EdgeLayout
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product.Paths[OLE DB Source Output]"
+          TopLeft="116.59999972965,63.0117646871141">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,38.9882337929675"
+              Start="0,0"
+              End="0,31.4882337929675">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,31.4882337929675" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="155.2,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\Data Conversion"
+          TopLeft="47.5000002682209,188.499998167157" />
+        <EdgeLayout
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product.Paths[Derived Column Output]"
+          TopLeft="121.749999821186,143.599998480082">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,44.8999996870756"
+              Start="0,0"
+              End="0,37.3999996870756">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,37.3999996870756" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="170.4,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\OLE DB Destination"
+          TopLeft="316.999995276332,187.999997198582" />
+        <EdgeLayout
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product.Paths[Data Conversion Output]"
+          TopLeft="202.700000268221,209.04999768287">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="114.299995008111,0"
+              Start="0,0"
+              End="106.799995008111,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="106.799995008111,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Product\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="170.4,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region\OLE DB Destination"
+          TopLeft="372.499994531274,180.499997392297" />
+        <NodeLayout
+          Size="149.6,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region\OLE DB Source"
+          TopLeft="65.5,65.5" />
+        <NodeLayout
+          Size="155.2,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region\Data Conversion"
+          TopLeft="56.5000005811453,176.499998793006" />
+        <EdgeLayout
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region.Paths[OLE DB Source Output]"
+          TopLeft="137.200000290573,107.1">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,69.3999987930059"
+              Start="0,0"
+              End="0,61.8999987930059">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,61.8999987930059" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region.Paths[Data Conversion Output]"
+          TopLeft="211.700000581145,199.299998092651">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="160.799993950129,0"
+              Start="0,0"
+              End="153.299993950129,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="153.299993950129,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Region\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
     design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Return_Profile">
     <LayoutInfo>
       <GraphLayout
@@ -11327,6 +12720,19 @@ where [refTable].[product_id] = ?</property>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Return_Profile\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
     design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Return_Profile\OLE DB Source">
     <Properties>
       <Property>
@@ -11334,8 +12740,106 @@ where [refTable].[product_id] = ?</property>
       </Property>
     </Properties>
   </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="149.6,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\OLE DB Source"
+          TopLeft="36.9999994486571,57.9999991357327" />
+        <NodeLayout
+          Size="152.8,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\Derived Column"
+          TopLeft="41.4285708112376,159.999997615814" />
+        <EdgeLayout
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping.Paths[OLE DB Source Output]"
+          TopLeft="114.814285129947,99.5999991357327">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60.3999984800815"
+              Start="0,0"
+              End="0,52.8999984800815">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.8999984800815" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="155.2,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\Data Conversion"
+          TopLeft="268.357139834336,155.719778875401" />
+        <EdgeLayout
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping.Paths[Derived Column Output]"
+          TopLeft="194.228570811238,178.659888245607">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="74.1285690230982,0"
+              Start="0,0"
+              End="66.6285690230982,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="66.6285690230982,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="170.4,41.6"
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\OLE DB Destination"
+          TopLeft="483.961531331906,154.730767007057" />
+        <EdgeLayout
+          Id="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping.Paths[Data Conversion Output]"
+          TopLeft="423.557139834336,176.025272941229">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="60.4043914975701,0"
+              Start="0,0"
+              End="52.9043914975701,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="52.9043914975701,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Return_Profile\OLE DB Destination">
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\03_Transform_And_Load_Dimensions\DFT_Load_Dim_Shipping\OLE DB Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -11351,29 +12855,65 @@ where [refTable].[product_id] = ?</property>
     design-time-name="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="170.4,52"
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Destination"
+          TopLeft="48.7142768261985,378.735292185987" />
         <NodeLayout
           Size="149.6,41.6"
           Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source"
-          TopLeft="5.5,5.5" />
+          TopLeft="61.0357144039352,40.8676470278224" />
+        <NodeLayout
+          Size="123.2,41.6"
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer"
+          TopLeft="72.4285678159524,290.470587322843" />
         <NodeLayout
           Size="114.4,41.6"
           Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Product"
-          TopLeft="29.500000089407,117.499998778105" />
+          TopLeft="74.3214287562486,204.485292819506" />
         <EdgeLayout
-          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[OLE DB Source Output]"
-          TopLeft="83.5000000447035,47.1">
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup Match Output]"
+          TopLeft="133.971422321075,332.070587322843">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,70.3999987781048"
+              EndConnector="0,46.6647048631445"
               Start="0,0"
-              End="0,62.8999987781048">
+              End="0,39.1647048631445">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,62.8999987781048" />
+                    End="0,39.1647048631445" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-48.19138671875,13.7776649315722,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="154.4,41.6"
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Conditional Split"
+          TopLeft="56.9642858355475,109.92647049188" />
+        <EdgeLayout
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[OLE DB Source Output]"
+          TopLeft="135.000000119741,82.4676470278224">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.458823464058"
+              Start="0,0"
+              End="0,19.958823464058">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.958823464058" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -11383,67 +12923,299 @@ where [refTable].[product_id] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <NodeLayout
-          Size="123.2,41.6"
-          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer"
-          TopLeft="278.499996826053,116.499999240041" />
+          Size="152.8,41.6"
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column"
+          TopLeft="364.642857919086,113.749999900294" />
         <EdgeLayout
-          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup Match Output]"
-          TopLeft="143.900000089407,137.799999009073">
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Invalid_Sales_Data]"
+          TopLeft="211.364285835548,132.638235196087">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="134.599996736646,0"
+              EndConnector="153.278572083538,0"
               Start="0,0"
-              End="127.099996736646,0">
+              End="145.778572083538,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="127.099996736646,0" />
+                    End="145.778572083538,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="15.3586116495729,5,96.3827734375,11.609375"
+              BoundingBox="30.4193251042692,5,84.939921875,11.0625"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <NodeLayout
-          Size="170.4,41.6"
-          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Destination"
-          TopLeft="527.999992132187,113.999998301268" />
+          Size="183.2,41.6"
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log"
+          TopLeft="772.50000164445,213.926470400721" />
         <EdgeLayout
-          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup Match Output1]"
-          TopLeft="401.699996826053,136.049998770654">
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Valid_Sales_Data]"
+          TopLeft="132.842857295898,151.52647049188">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="126.299995306134,0"
+              EndConnector="0,52.9588223276257"
               Start="0,0"
-              End="118.799995306134,0">
+              End="0,45.4588223276257">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="118.799995306134,0" />
+                    End="0,45.4588223276257" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="11.2086109343171,5,96.3827734375,11.609375"
+              BoundingBox="-38.55654296875,17.1981611638128,77.1130859375,11.0625"
               RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="162.4,41.6"
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 1"
+          TopLeft="355.535715042556,204.594117514005" />
+        <EdgeLayout
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup Match Output1]"
+          TopLeft="132.7749982861,246.085292819506">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,44.3852945033366"
+              Start="0,0"
+              End="0,36.8852945033366">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,36.8852945033366" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-48.19138671875,12.6379597516683,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup No Match Output]"
+          TopLeft="188.721428756249,225.339705166756">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="166.814286286308,0"
+              Start="0,0"
+              End="159.314286286308,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="159.314286286308,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="23.8507564244039,5,111.6127734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="162.4,41.6"
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Derived Column 2"
+          TopLeft="356.250000758363,288.367646856897" />
+        <EdgeLayout
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Lookup No Match Output1]"
+          TopLeft="195.628567815952,310.21911708987">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="160.62143294241,0"
+              Start="0,0"
+              End="153.12143294241,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="153.12143294241,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="20.7543297524551,5,111.6127734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="120,41.6"
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Union All"
+          TopLeft="578.571429803055,211.897058688633" />
+        <EdgeLayout
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Derived Column Output]"
+          TopLeft="517.935715042556,229.045588101319">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="60.6357147604987,0"
+              Start="0,0"
+              End="53.1357147604987,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="53.1357147604987,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Derived Column Output1]"
+          TopLeft="437.450000758363,288.367646856897">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="201.121429044692,-34.8705881682646"
+              Start="0,0"
+              End="201.121429044692,-27.3705881682646">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-13.4352940841323" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,-13.4352940841323"
+                    Point2="0,-17.4352940841323"
+                    Point3="4,-17.4352940841323" />
+                  <mssgle:LineSegment
+                    End="197.121429044692,-17.4352940841323" />
+                  <mssgle:CubicBezierSegment
+                    Point1="197.121429044692,-17.4352940841323"
+                    Point2="201.121429044692,-17.4352940841323"
+                    Point3="201.121429044692,-21.4352940841323" />
+                  <mssgle:LineSegment
+                    End="201.121429044692,-27.3705881682646" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Derived Column Output2]"
+          TopLeft="441.042857919086,155.349999900294">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="197.528571883969,56.5470587883389"
+              Start="0,0"
+              End="197.528571883969,49.0470587883389">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,24.2735293941695" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,24.2735293941695"
+                    Point2="0,28.2735293941695"
+                    Point3="4,28.2735293941695" />
+                  <mssgle:LineSegment
+                    End="193.528571883969,28.2735293941695" />
+                  <mssgle:CubicBezierSegment
+                    Point1="193.528571883969,28.2735293941695"
+                    Point2="197.528571883969,28.2735293941695"
+                    Point3="197.528571883969,32.2735293941695" />
+                  <mssgle:LineSegment
+                    End="197.528571883969,49.0470587883389" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales.Paths[Union All Output 1]"
+          TopLeft="698.571429803055,233.711764544677">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="73.9285718413947,0"
+              Start="0,0"
+              End="66.4285718413947,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="66.4285718413947,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
+    design-time-name="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
     design-time-name="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Source">
     <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer">
+    <Properties>
+      <Property>
+        <Name>OverwriteParamsSQLProp</Name>
+        <Value
+          type="q2:boolean">false</Value>
+      </Property>
+      <Property>
+        <Name>UsedTableName</Name>
+        <Value
+          type="q3:string">[dbo].[Dim_Customer]</Value>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q4:string">0</Value>
+      </Property>
       <Property>
         <Name>DataSourceViewID</Name>
       </Property>
@@ -11473,30 +13245,7 @@ where [refTable].[product_id] = ?</property>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\Customer">
-    <Properties>
-      <Property>
-        <Name>OverwriteParamsSQLProp</Name>
-        <Value
-          type="q2:boolean">false</Value>
-      </Property>
-      <Property>
-        <Name>UsedTableName</Name>
-        <Value
-          type="q3:string">[dbo].[Dim_Customer]</Value>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q4:int">0</Value>
-      </Property>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
-    design-time-name="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\OLE DB Destination">
+    design-time-name="Package\04_Load_Fact_Tables\DFT_Load_Fact_Sales\DEST_Error_Data_Log">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>

@@ -3,6 +3,7 @@
    Kho dữ liệu EcommerceDW - Chuẩn Kimball Star/Galaxy Schema Tinh Gọn:
    - 8 Dimensions chất lượng cao (không còn bảng 2 cột, hỗ trợ Hierarchy, Junk Dim)
    - 7 Fact Tables (3 Fact Cơ bản + 4 Fact Chiến lược Trừu tượng)
+   - 1 Bảng Error_Data_Log (Cách ly ngoại lệ & giám sát chất lượng ETL SSIS)
    Nền tảng: Microsoft SQL Server (2016 trở lên)
    ===================================================================== */
 
@@ -307,6 +308,31 @@ CREATE TABLE dbo.Fact_Campaign_Promotion (
 );
 GO
 
+-- 3.8 Error_Data_Log (BẢNG QUARANTINE / LƯU VẾT LỖI NGOẠI LỆ ETL SSIS)
+-- Mục đích: Cách ly các bản ghi vi phạm tính toàn vẹn nghiệp vụ hoặc mồ côi khóa
+-- Giúp pipeline SSIS luôn chạy thành công 100% không bao giờ sập đỏ
+IF OBJECT_ID('dbo.Error_Data_Log', 'U') IS NOT NULL
+    DROP TABLE dbo.Error_Data_Log;
+GO
+
+CREATE TABLE dbo.Error_Data_Log (
+    error_id         BIGINT IDENTITY(1,1) NOT NULL,
+    order_id         VARCHAR(50)          NULL,
+    product_id       VARCHAR(50)          NULL,
+    customer_id      VARCHAR(50)          NULL,
+    order_date       VARCHAR(50)          NULL,
+    quantity         INT                  NULL,
+    unit_price       DECIMAL(18,4)        NULL,
+    gross_sales      DECIMAL(18,4)        NULL,
+    discount_amount  DECIMAL(18,4)        NULL,
+    net_revenue      DECIMAL(18,4)        NULL,
+    reject_rule      NVARCHAR(100)        NOT NULL,
+    error_message    NVARCHAR(255)        NOT NULL,
+    logged_at        DATETIME             NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT PK_Error_Data_Log PRIMARY KEY CLUSTERED (error_id)
+);
+GO
+
 -- =====================================================================
 -- 4. TẠO INDEX TỐI ƯU HIỆU NĂNG CHO SSAS CUBE VÀ TRUY VẤN
 -- =====================================================================
@@ -321,6 +347,8 @@ CREATE NONCLUSTERED INDEX IX_FFeedback_date   ON dbo.Fact_Customer_Feedback (dat
 CREATE NONCLUSTERED INDEX IX_FAcq_date        ON dbo.Fact_Customer_Acquisition (date_key);
 CREATE NONCLUSTERED INDEX IX_FSnap_customer   ON dbo.Fact_Customer_Snapshot (customer_key);
 CREATE NONCLUSTERED INDEX IX_FPromo_mkt       ON dbo.Fact_Campaign_Promotion (marketing_key);
+CREATE NONCLUSTERED INDEX IX_Error_Data_Log_reject_rule ON dbo.Error_Data_Log (reject_rule);
+CREATE NONCLUSTERED INDEX IX_Error_Data_Log_order_id    ON dbo.Error_Data_Log (order_id);
 GO
 
 -- =====================================================================
@@ -331,7 +359,7 @@ SELECT
     type_desc AS Object_Type,
     create_date AS Created_Time
 FROM sys.tables
-WHERE name LIKE 'Dim[_]%' OR name LIKE 'Fact[_]%'
+WHERE name LIKE 'Dim[_]%' OR name LIKE 'Fact[_]%' OR name = 'Error_Data_Log'
 ORDER BY name;
 GO
 

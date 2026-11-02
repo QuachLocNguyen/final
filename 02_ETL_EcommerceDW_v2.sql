@@ -1,29 +1,30 @@
 -- =====================================================================
 -- DỰ ÁN DATA WAREHOUSE & HỆ HỖ TRỢ RA QUYẾT ĐỊNH (DSS)
--- TẬP LỆNH T-SQL CHUẨN: THIẾT LẬP VÀ VẬN HÀNH TOÀN BỘ PIPELINE ETL
+-- TẬP LỆNH T-SQL CHUẨN & TỔNG HỢP CÁC BIỂU THỨC SSIS (ETL EXPRESSIONS)
 -- Database: EcommerceDW (Microsoft SQL Server)
 -- ETL Tool: SQL Server Integration Services (SSIS)
+-- File: final/02_ETL_EcommerceDW_v2.sql
 -- =====================================================================
--- BẢN MỚI NHẤT: ĐÃ HOÀN THIỆN 100%, ĐỐI SOÁT CHÍNH XÁC >800.000 DÒNG
--- Bao gồm:
---   1. Script dọn sạch và reset hệ thống (Container 1: Prepare Staging)
---   2. Tập lệnh nạp 8 bảng Dimension (Container 3: Load Dimensions)
---   3. Tập lệnh nạp bảng Fact chính Fact_Sales (Container 4: DFT_Load_Fact_Sales)
---   4. Tập lệnh nạp 6 bảng Fact chiến lược (Container 4: SQL_Load_Strategic_Facts)
---   5. Bộ truy vấn đối soát kiểm toán chất lượng dữ liệu (Data Reconciliation)
+-- BẢN MỚI NHẤT: ĐÃ ĐỐI SOÁT CHÍNH XÁC >800.000 DÒNG
+-- TỔNG HỢP TOÀN BỘ CÁC DÒNG BIỂU THỨC SSIS (ETL EXPRESSIONS)
+-- BAO GỒM CONDITIONAL SPLIT, DERIVED COLUMN, LOOKUP REDIRECTION
+-- VÀ TẬP LỆNH T-SQL TƯƠNG ĐƯƠNG VẬN HÀNH TRÊN SSMS.
 -- =====================================================================
 
 USE EcommerceDW;
 GO
 
+SET NOCOUNT ON;
+GO
+
 -- =====================================================================
 -- PHẦN 1: DỌN SẠCH VÀ RESET TOÀN BỘ HỆ THỐNG TRƯỚC KHI NẠP (PRE-ETL)
 -- Dùng trong: Container 01_Prepare_Staging -> Task SQL_Truncate_Staging
--- Mục đích: Đảm bảo tính Idempotent (chạy bao nhiêu lần cũng không bị lỗi trùng lặp)
+-- Mục đích: Đảm bảo tính Idempotent (chạy bao nhiêu lần cũng không bị trùng lặp)
 -- =====================================================================
 
 PRINT '=========================================================';
-PRINT 'BẮT ĐẦU DỌN SẠCH BẢNG STAGING, FACT VÀ DIMENSION...';
+PRINT 'BẮT ĐẦU DỌN SẠCH BẢNG STAGING, ERROR LOG, FACT VÀ DIMENSION...';
 PRINT '=========================================================';
 
 -- 1.1 Dọn sạch 4 bảng Staging
@@ -32,7 +33,13 @@ TRUNCATE TABLE dbo.stg_product_catalog;
 TRUNCATE TABLE dbo.stg_order_items;
 TRUNCATE TABLE dbo.stg_sales_full;
 
--- 1.2 Dọn sạch toàn bộ 7 bảng Fact
+-- 1.2 Dọn sạch bảng Error Log (nếu bảng đã tồn tại)
+IF OBJECT_ID('dbo.Error_Data_Log', 'U') IS NOT NULL
+BEGIN
+    TRUNCATE TABLE dbo.Error_Data_Log;
+END;
+
+-- 1.3 Dọn sạch toàn bộ 7 bảng Fact
 TRUNCATE TABLE dbo.Fact_Sales;
 TRUNCATE TABLE dbo.Fact_Order_Fulfillment;
 TRUNCATE TABLE dbo.Fact_Return;
@@ -41,7 +48,7 @@ TRUNCATE TABLE dbo.Fact_Customer_Acquisition;
 TRUNCATE TABLE dbo.Fact_Customer_Snapshot;
 TRUNCATE TABLE dbo.Fact_Campaign_Promotion;
 
--- 1.3 Xóa dữ liệu 8 bảng Dimension & Reset bộ đếm Identity về 0
+-- 1.4 Xóa dữ liệu 8 bảng Dimension & Reset bộ đếm Identity về 0
 DELETE FROM dbo.Dim_Date;
 DELETE FROM dbo.Dim_Product;
 DELETE FROM dbo.Dim_Customer;
@@ -65,6 +72,7 @@ GO
 
 -- =====================================================================
 -- PHẦN 2: TẬP LỆNH NẠP 8 BẢNG CHIỀU (DIMENSIONS)
+-- KÈM DANH SÁCH CÁC BIỂU THỨC SSIS DERIVED COLUMN ĐÃ CẤU HÌNH
 -- Dùng trong: Container 03_Transform_And_Load_Dimensions
 -- =====================================================================
 
@@ -115,7 +123,12 @@ GO
 
 ------------------------------------------------------------------------
 -- 2.2 DIM_PRODUCT (Data Flow: DFT_Load_Dim_Product)
--- Nguồn: stg_product_catalog -> Transform phân nhóm giá và rating -> Dim_Product
+------------------------------------------------------------------------
+-- CÁC DÒNG BIỂU THỨC SSIS (DERIVED COLUMN EXPRESSIONS TRONG PACKAGE):
+-- 1. Cột price_tier:
+--    Expression: unit_price < 100 ? "Budget" : unit_price < 500 ? "Mid-Range" : unit_price < 1000 ? "Premium" : "Luxury"
+-- 2. Cột rating_group:
+--    Expression: product_rating < 3.0 ? "Low" : product_rating <= 4.0 ? "Average" : "High"
 ------------------------------------------------------------------------
 -- Câu lệnh dùng trong OLE DB Source của DFT_Load_Dim_Product:
 SELECT 
@@ -133,7 +146,10 @@ GO
 
 ------------------------------------------------------------------------
 -- 2.3 DIM_CUSTOMER (Data Flow: DFT_Load_Dim_Customer)
--- Nguồn: stg_customer_master + CTE tính customer_type từ stg_sales_full
+------------------------------------------------------------------------
+-- CÁC DÒNG BIỂU THỨC SSIS (DERIVED COLUMN EXPRESSIONS TRONG PACKAGE):
+-- 1. Cột age_group:
+--    Expression: customer_age <= 25 ? "18-25" : customer_age <= 35 ? "26-35" : customer_age <= 50 ? "36-50" : "50+"
 ------------------------------------------------------------------------
 -- Câu lệnh dùng trong OLE DB Source của DFT_Load_Dim_Customer:
 WITH CustomerOrderStats AS (
@@ -171,7 +187,6 @@ GO
 -- 2.4 DIM_REGION (Data Flow: DFT_Load_Dim_Region)
 -- Lấy danh mục 38 bang, quốc gia, khu vực duy nhất từ stg_sales_full
 ------------------------------------------------------------------------
--- Câu lệnh dùng trong OLE DB Source của DFT_Load_Dim_Region:
 SELECT DISTINCT 
     CAST(region AS VARCHAR(50)) AS region,
     customer_state AS [state],
@@ -182,9 +197,11 @@ GO
 
 ------------------------------------------------------------------------
 -- 2.5 DIM_SHIPPING (Data Flow: DFT_Load_Dim_Shipping)
--- Lấy 76 cặp tổ hợp phương thức giao hàng và kho lưu trữ
 ------------------------------------------------------------------------
--- Câu lệnh dùng trong OLE DB Source của DFT_Load_Dim_Shipping:
+-- CÁC DÒNG BIỂU THỨC SSIS (DERIVED COLUMN EXPRESSIONS TRONG PACKAGE):
+-- 1. Cột shipping_speed:
+--    Expression: shipping_method == "Express" || shipping_method == "Same Day" || shipping_method == "Next Day" ? "Fast" : (shipping_method == "Standard" ? "Standard" : "Economy")
+------------------------------------------------------------------------
 SELECT DISTINCT 
     shipping_method, 
     warehouse
@@ -196,7 +213,6 @@ GO
 -- 2.6 DIM_ORDER_PROFILE (Data Flow: DFT_Load_Dim_Order_Profile)
 -- Lấy tổ hợp trạng thái đơn, thanh toán, kênh bán và trạng thái giao
 ------------------------------------------------------------------------
--- Câu lệnh dùng trong OLE DB Source của DFT_Load_Dim_Order_Profile:
 SELECT DISTINCT 
     CAST(ISNULL(order_status, 'Unknown') AS VARCHAR(50)) AS order_status,
     CAST(ISNULL(payment_method, 'Unknown') AS VARCHAR(50)) AS payment_method,
@@ -208,9 +224,13 @@ GO
 
 ------------------------------------------------------------------------
 -- 2.7 DIM_MARKETING_CAMPAIGN (Data Flow: DFT_Load_Dim_Marketing_Campaign)
--- Lấy tổ hợp kênh marketing, tên chiến dịch, mã giảm giá
 ------------------------------------------------------------------------
--- Câu lệnh dùng trong OLE DB Source của DFT_Load_Dim_Marketing_Campaign:
+-- CÁC DÒNG BIỂU THỨC SSIS (DERIVED COLUMN EXPRESSIONS TRONG PACKAGE):
+-- 1. Cột has_coupon:
+--    Expression: coupon_code != "NO_COUPON" && coupon_code != "" ? (DT_BOOL)1 : (DT_BOOL)0
+-- 2. Cột channel_type:
+--    Expression: marketing_channel == "Google Ads" || marketing_channel == "Facebook" || marketing_channel == "Instagram" ? "Paid Media" : (marketing_channel == "Email" || marketing_channel == "Affiliate" ? "Owned Media" : "Organic Media")
+------------------------------------------------------------------------
 SELECT DISTINCT 
     CAST(ISNULL(marketing_channel, 'Direct') AS VARCHAR(100)) AS marketing_channel,
     CAST(ISNULL(campaign_name, 'No Campaign') AS VARCHAR(150)) AS campaign_name,
@@ -220,9 +240,11 @@ GO
 
 ------------------------------------------------------------------------
 -- 2.8 DIM_RETURN_PROFILE (Data Flow: DFT_Load_Dim_Return_Profile)
--- Lấy danh mục 8 lý do và nhóm lý do hoàn trả hàng
 ------------------------------------------------------------------------
--- Câu lệnh dùng trong OLE DB Source của DFT_Load_Dim_Return_Profile:
+-- CÁC DÒNG BIỂU THỨC SSIS (DERIVED COLUMN EXPRESSIONS TRONG PACKAGE):
+-- 1. Cột return_reason_group:
+--    Expression: return_reason == "Defective" || return_reason == "Damaged" ? "Product Quality Issue" : (return_reason == "Late Delivery" || return_reason == "Wrong Item" ? "Logistics Issue" : "Customer Choice Issue")
+------------------------------------------------------------------------
 SELECT DISTINCT 
     CAST(return_status AS VARCHAR(50)) AS return_status,
     return_reason,
@@ -238,12 +260,44 @@ GO
 
 
 -- =====================================================================
--- PHẦN 3: TẬP LỆNH NẠP BẢNG FACT BÁN HÀNG CHI TIẾT (FACT_SALES)
+-- PHẦN 3: TẬP LỆNH NẠP FACT_SALES & TỔNG HỢP CÁC BIỂU THỨC ETL (SSIS EXPRESSIONS)
 -- Dùng trong: Container 04_Load_Fact_Tables -> Task DFT_Load_Fact_Sales
 -- =====================================================================
+-- DANH SÁCH CHI TIẾT CÁC DÒNG BIỂU THỨC SSIS (SSIS ETL EXPRESSIONS):
+--
+-- 1. KHỐI CONDITIONAL SPLIT [CS_Check_Business_Rules]:
+--    * Output Name 1: Invalid_Sales_Data
+--      - Biểu thức SSIS: quantity <= 0 || discount_amount > gross_sales || gross_sales < 0
+--    * Default Output Name: Valid_Sales_Data
+--
+-- 2. KHỐI DERIVED COLUMN [DER_Add_Business_Error_Info] (Nhánh Invalid_Sales_Data):
+--    * Cột reject_rule   (Kiểu DT_WSTR 100): "RULE_BUSINESS_VIOLATION"
+--    * Cột error_message (Kiểu DT_WSTR 255): "Invalid quantity or excessive discount amount"
+--
+-- 3. KHỐI LOOKUP [Product] (Xử lý khóa mồ côi):
+--    * Specify how to handle rows with no matching entries: Redirect rows to no match output
+--    * Nhánh Lookup No Match Output nối vào khối Derived Column [DER_Orphan_Prod_Error]:
+--      - Cột reject_rule   (Kiểu DT_WSTR 100): "RULE_ORPHAN_PRODUCT"
+--      - Cột error_message (Kiểu DT_WSTR 255): "Product ID does not exist in Dim_Product"
+--
+-- 4. KHỐI LOOKUP [Customer] (Xử lý khóa mồ côi):
+--    * Specify how to handle rows with no matching entries: Redirect rows to no match output
+--    * Nhánh Lookup No Match Output nối vào khối Derived Column [DER_Orphan_Cust_Error]:
+--      - Cột reject_rule   (Kiểu DT_WSTR 100): "RULE_ORPHAN_CUSTOMER"
+--      - Cột error_message (Kiểu DT_WSTR 255): "Customer ID does not exist in Dim_Customer"
+--
+-- 5. KHỐI OLE DB DESTINATION [DEST_Error_Data_Log]:
+--    * Table: dbo.Error_Data_Log
+--    * Cột nạp: order_id, product_id, customer_id, order_date, quantity, gross_sales, discount_amount, net_revenue, reject_rule, error_message
+--
+-- 6. KHỐI OLE DB DESTINATION [DEST_Fact_Sales]:
+--    * Table: dbo.Fact_Sales (100% dữ liệu chuẩn sạch sau khi qua các điều kiện trên)
+-- =====================================================================
 
--- Câu lệnh dùng trong OLE DB Source của DFT_Load_Fact_Sales:
--- (Sau đó qua 2 khối Lookup: Product -> product_key, Customer -> customer_key)
+------------------------------------------------------------------------
+-- 3.1 CÂU LỆNH OLE DB SOURCE CHO DATA FLOW TASK TRONG SSIS:
+------------------------------------------------------------------------
+/*
 WITH DeduplicatedItems AS (
     SELECT 
         CAST(order_id AS VARCHAR(50)) AS order_id,
@@ -289,6 +343,133 @@ LEFT JOIN dbo.Dim_Marketing_Campaign mc ON
     ISNULL(s.campaign_name, '') = ISNULL(mc.campaign_name, '') AND
     ISNULL(s.coupon_code, '') = ISNULL(mc.coupon_code, '')
 WHERE di.rn = 1;
+*/
+
+------------------------------------------------------------------------
+-- 3.2 TẬP LỆNH T-SQL MÔ PHỎNG LUỒNG SSIS TRÊN SSMS:
+-- BƯỚC A: BẪY VÀ LƯU VẾT CÁC DÒNG NGOẠI LỆ VÀO ERROR_DATA_LOG
+------------------------------------------------------------------------
+IF OBJECT_ID('dbo.Error_Data_Log', 'U') IS NOT NULL
+BEGIN
+    WITH DeduplicatedItems AS (
+        SELECT 
+            CAST(order_id AS VARCHAR(50)) AS order_id,
+            CAST(product_id AS VARCHAR(50)) AS product_id,
+            TRY_CONVERT(INT, quantity) AS quantity,
+            TRY_CONVERT(DECIMAL(18,4), gross_sales) AS gross_sales,
+            TRY_CONVERT(DECIMAL(18,4), discount_amount) AS discount_amount,
+            TRY_CONVERT(DECIMAL(18,4), tax_amount) AS tax_amount,
+            TRY_CONVERT(DECIMAL(18,4), net_sales) AS net_revenue,
+            TRY_CONVERT(DECIMAL(18,4), product_cost) AS product_cost,
+            TRY_CONVERT(DECIMAL(18,4), shipping_cost) AS shipping_cost_allocated,
+            TRY_CONVERT(DECIMAL(18,4), profit) AS contribution_margin,
+            ROW_NUMBER() OVER (PARTITION BY order_id, product_id ORDER BY TRY_CONVERT(INT, quantity) DESC) AS rn
+        FROM dbo.stg_order_items
+    )
+    INSERT INTO dbo.Error_Data_Log (
+        order_id, product_id, customer_id, order_date,
+        quantity, gross_sales, discount_amount, net_revenue,
+        reject_rule, error_message
+    )
+    SELECT
+        di.order_id,
+        di.product_id,
+        CAST(s.customer_id AS VARCHAR(50)) AS customer_id,
+        s.order_date,
+        di.quantity,
+        di.gross_sales,
+        di.discount_amount,
+        di.net_revenue,
+        CASE 
+            WHEN di.quantity <= 0 OR di.quantity IS NULL THEN N'RULE_INVALID_QUANTITY'
+            WHEN di.discount_amount > di.gross_sales THEN N'RULE_EXCESSIVE_DISCOUNT'
+            WHEN di.gross_sales < 0 THEN N'RULE_NEGATIVE_GROSS_SALES'
+            WHEN p.product_key IS NULL THEN N'RULE_ORPHAN_PRODUCT'
+            WHEN c.customer_key IS NULL THEN N'RULE_ORPHAN_CUSTOMER'
+            ELSE N'RULE_BUSINESS_VIOLATION'
+        END AS reject_rule,
+        CASE 
+            WHEN di.quantity <= 0 OR di.quantity IS NULL THEN N'Số lượng quantity <= 0 hoặc null'
+            WHEN di.discount_amount > di.gross_sales THEN N'Chiết khấu discount_amount vượt quá tổng tiền gross_sales'
+            WHEN di.gross_sales < 0 THEN N'Tổng tiền gross_sales có giá trị âm không hợp lệ'
+            WHEN p.product_key IS NULL THEN N'Mã product_id không tồn tại trong Dim_Product'
+            WHEN c.customer_key IS NULL THEN N'Mã customer_id không tồn tại trong Dim_Customer'
+            ELSE N'Invalid quantity or excessive discount amount'
+        END AS error_message
+    FROM DeduplicatedItems di
+    INNER JOIN dbo.stg_sales_full s ON di.order_id = s.order_id
+    LEFT JOIN dbo.Dim_Product p ON di.product_id = p.product_id
+    LEFT JOIN dbo.Dim_Customer c ON s.customer_id = c.customer_id
+    WHERE di.rn = 1
+      AND (
+          di.quantity <= 0 OR di.quantity IS NULL
+          OR di.discount_amount > di.gross_sales
+          OR di.gross_sales < 0
+          OR p.product_key IS NULL
+          OR c.customer_key IS NULL
+      );
+END;
+GO
+
+------------------------------------------------------------------------
+-- BƯỚC B: NẠP DỮ LIỆU SẠCH VÀO FACT_SALES (CLEAN STREAM)
+------------------------------------------------------------------------
+WITH DeduplicatedItems AS (
+    SELECT 
+        CAST(order_id AS VARCHAR(50)) AS order_id,
+        CAST(product_id AS VARCHAR(50)) AS product_id,
+        TRY_CONVERT(INT, quantity) AS quantity,
+        TRY_CONVERT(DECIMAL(18,4), gross_sales) AS gross_sales,
+        TRY_CONVERT(DECIMAL(18,4), discount_amount) AS discount_amount,
+        TRY_CONVERT(DECIMAL(18,4), tax_amount) AS tax_amount,
+        TRY_CONVERT(DECIMAL(18,4), net_sales) AS net_revenue,
+        TRY_CONVERT(DECIMAL(18,4), product_cost) AS product_cost,
+        TRY_CONVERT(DECIMAL(18,4), shipping_cost) AS shipping_cost_allocated,
+        TRY_CONVERT(DECIMAL(18,4), profit) AS contribution_margin,
+        ROW_NUMBER() OVER (PARTITION BY order_id, product_id ORDER BY TRY_CONVERT(INT, quantity) DESC) AS rn
+    FROM dbo.stg_order_items
+)
+INSERT INTO dbo.Fact_Sales (
+    order_id, product_key, customer_key, date_key,
+    region_key, order_profile_key, marketing_key,
+    quantity, gross_sales, discount_amount, tax_amount,
+    net_revenue, product_cost, shipping_cost_allocated, contribution_margin
+)
+SELECT
+    di.order_id,
+    p.product_key,
+    c.customer_key,
+    CAST(CONVERT(VARCHAR(8), TRY_CONVERT(DATE, s.order_date), 112) AS INT) AS date_key,
+    r.region_key,
+    op.order_profile_key,
+    mc.marketing_key,
+    di.quantity,
+    di.gross_sales,
+    di.discount_amount,
+    di.tax_amount,
+    di.net_revenue,
+    di.product_cost,
+    di.shipping_cost_allocated,
+    di.contribution_margin
+FROM DeduplicatedItems di
+INNER JOIN dbo.stg_sales_full s ON di.order_id = s.order_id
+INNER JOIN dbo.Dim_Product p ON di.product_id = p.product_id
+INNER JOIN dbo.Dim_Customer c ON s.customer_id = c.customer_id
+LEFT JOIN dbo.Dim_Region r ON s.region = r.region AND s.customer_state = r.[state] AND s.customer_country = r.country
+LEFT JOIN dbo.Dim_Order_Profile op ON 
+    ISNULL(s.order_status, '') = ISNULL(op.order_status, '') AND
+    ISNULL(s.payment_method, '') = ISNULL(op.payment_method, '') AND
+    ISNULL(s.payment_status, '') = ISNULL(op.payment_status, '') AND
+    ISNULL(s.sales_channel, '') = ISNULL(op.sales_channel, '') AND
+    ISNULL(s.delivery_status, '') = ISNULL(op.delivery_status, '')
+LEFT JOIN dbo.Dim_Marketing_Campaign mc ON
+    ISNULL(s.marketing_channel, '') = ISNULL(mc.marketing_channel, '') AND
+    ISNULL(s.campaign_name, '') = ISNULL(mc.campaign_name, '') AND
+    ISNULL(s.coupon_code, '') = ISNULL(mc.coupon_code, '')
+WHERE di.rn = 1
+  AND di.quantity > 0
+  AND di.gross_sales >= 0
+  AND (di.discount_amount <= di.gross_sales OR di.discount_amount IS NULL);
 GO
 
 
@@ -536,7 +717,7 @@ GO
 -- PHẦN 5: BỘ TRUY VẤN ĐỐI SOÁT & KIỂM TOÁN CHẤT LƯỢNG (AUDIT RECONCILIATION)
 -- =====================================================================
 
--- 5.1 Kiểm tra số lượng dòng trên toàn bộ 15 bảng
+-- 5.1 Kiểm tra số lượng dòng trên toàn bộ 15 bảng chuẩn + bảng Error_Data_Log
 SELECT '1. Dim_Date' AS TableName, COUNT(*) AS RowsCount FROM dbo.Dim_Date
 UNION ALL SELECT '2. Dim_Product', COUNT(*) FROM dbo.Dim_Product
 UNION ALL SELECT '3. Dim_Customer', COUNT(*) FROM dbo.Dim_Customer
@@ -552,7 +733,9 @@ UNION ALL SELECT '11. Fact_Return', COUNT(*) FROM dbo.Fact_Return
 UNION ALL SELECT '12. Fact_Customer_Feedback', COUNT(*) FROM dbo.Fact_Customer_Feedback
 UNION ALL SELECT '13. Fact_Customer_Acquisition', COUNT(*) FROM dbo.Fact_Customer_Acquisition
 UNION ALL SELECT '14. Fact_Campaign_Promotion', COUNT(*) FROM dbo.Fact_Campaign_Promotion
-UNION ALL SELECT '15. Fact_Customer_Snapshot', COUNT(*) FROM dbo.Fact_Customer_Snapshot;
+UNION ALL SELECT '15. Fact_Customer_Snapshot', COUNT(*) FROM dbo.Fact_Customer_Snapshot
+UNION ALL SELECT '--- [EXCEPTION LOG] ---', NULL
+UNION ALL SELECT '16. Error_Data_Log (Dị biệt/Ngoại lệ)', COUNT(*) FROM dbo.Error_Data_Log;
 
 -- 5.2 Đối soát doanh thu thuần giữa Fact_Sales và file gốc CSV
 SELECT 
@@ -573,5 +756,13 @@ SELECT
 FROM dbo.Fact_Customer_Snapshot
 GROUP BY loyalty_tier
 ORDER BY SUM(month_net_revenue) DESC;
-GO
 
+-- 5.4 Thống kê chi tiết các dòng vi phạm bị cách ly vào Error_Data_Log
+SELECT 
+    reject_rule AS Quy_Tac_Chan_Loi,
+    COUNT(*) AS So_Luong_Dong_Ngoai_Le,
+    MIN(error_message) AS Vi_Du_Mo_Ta_Loi,
+    FORMAT(ISNULL(SUM(gross_sales), 0), 'N2') + ' USD' AS Tong_Gia_Tri_Giao_Dich_Loi
+FROM dbo.Error_Data_Log
+GROUP BY reject_rule;
+GO
