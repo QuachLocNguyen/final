@@ -1,4 +1,4 @@
-﻿<Dimension xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddl2="http://schemas.microsoft.com/analysisservices/2003/engine/2" xmlns:ddl2_2="http://schemas.microsoft.com/analysisservices/2003/engine/2/2" xmlns:ddl100_100="http://schemas.microsoft.com/analysisservices/2008/engine/100/100" xmlns:ddl200="http://schemas.microsoft.com/analysisservices/2010/engine/200" xmlns:ddl200_200="http://schemas.microsoft.com/analysisservices/2010/engine/200/200" xmlns:ddl300="http://schemas.microsoft.com/analysisservices/2011/engine/300" xmlns:ddl300_300="http://schemas.microsoft.com/analysisservices/2011/engine/300/300" xmlns:ddl400="http://schemas.microsoft.com/analysisservices/2012/engine/400" xmlns:ddl400_400="http://schemas.microsoft.com/analysisservices/2012/engine/400/400" xmlns:ddl500="http://schemas.microsoft.com/analysisservices/2013/engine/500" xmlns:ddl500_500="http://schemas.microsoft.com/analysisservices/2013/engine/500/500" xmlns:dwd="http://schemas.microsoft.com/DataWarehouse/Designer/1.0" dwd:design-time-name="c5528270-8bab-403c-a2ce-765fe4a9bc76" xmlns="http://schemas.microsoft.com/analysisservices/2003/engine">
+﻿<Dimension xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddl2="http://schemas.microsoft.com/analysisservices/2003/engine/2" xmlns:ddl2_2="http://schemas.microsoft.com/analysisservices/2003/engine/2/2" xmlns:ddl100_100="http://schemas.microsoft.com/analysisservices/2008/engine/100/100" xmlns:ddl200="http://schemas.microsoft.com/analysisservices/2010/engine/200" xmlns:ddl200_200="http://schemas.microsoft.com/analysisservices/2010/engine/200/200" xmlns:ddl300="http://schemas.microsoft.com/analysisservices/2011/engine/300" xmlns:ddl300_300="http://schemas.microsoft.com/analysisservices/2011/engine/300/300" xmlns:ddl400="http://schemas.microsoft.com/analysisservices/2012/engine/400" xmlns:ddl400_400="http://schemas.microsoft.com/analysisservices/2012/engine/400/400" xmlns:ddl500="http://schemas.microsoft.com/analysisservices/2013/engine/500" xmlns:ddl500_500="http://schemas.microsoft.com/analysisservices/2013/engine/500/500" xmlns:dwd="http://schemas.microsoft.com/DataWarehouse/Designer/1.0" dwd:design-time-name="2f150aea-8329-435d-a2c6-a6779aaf9b12" xmlns="http://schemas.microsoft.com/analysisservices/2003/engine">
   <ID>Dim Return Profile</ID>
   <Name>Dim Return Profile</Name>
   <CreatedTimestamp>0001-01-01T00:00:00Z</CreatedTimestamp>
@@ -8,7 +8,7 @@
       <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:DiagramLayout</Name>
       <Value>
         <dds xmlns="">
-          <diagram fontclsid="{0BE35203-8F91-11CE-9DE3-00AA004BB851}" mouseiconclsid="{0BE35204-8F91-11CE-9DE3-00AA004BB851}" defaultlayout="MSDDS.Rectilinear" defaultlineroute="MSDDS.Rectilinear" version="7" nextobject="2" scale="100" pagebreakanchorx="0" pagebreakanchory="0" pagebreaksizex="0" pagebreaksizey="0" scrollleft="-530" scrolltop="-4795" gridx="150" gridy="150" marginx="5000" marginy="5000" zoom="100" x="5419" y="11896" backcolor="2039583" defaultpersistence="2" PrintPageNumbersMode="3" PrintMarginTop="0" PrintMarginBottom="635" PrintMarginLeft="0" PrintMarginRight="0" marqueeselectionmode="0" mousepointer="0" snaptogrid="0" autotypeannotation="1" showscrollbars="0" viewpagebreaks="0" donotforceconnectorsbehindshapes="1" backpictureclsid="{00000000-0000-0000-0000-000000000000}">
+          <diagram fontclsid="{0BE35203-8F91-11CE-9DE3-00AA004BB851}" mouseiconclsid="{0BE35204-8F91-11CE-9DE3-00AA004BB851}" defaultlayout="MSDDS.Rectilinear" defaultlineroute="MSDDS.Rectilinear" version="7" nextobject="3" scale="100" pagebreakanchorx="0" pagebreakanchory="0" pagebreaksizex="0" pagebreaksizey="0" scrollleft="-530" scrolltop="-4795" gridx="150" gridy="150" marginx="5000" marginy="5000" zoom="100" x="9250" y="12594" backcolor="2039583" defaultpersistence="2" PrintPageNumbersMode="3" PrintMarginTop="0" PrintMarginBottom="635" PrintMarginLeft="0" PrintMarginRight="0" marqueeselectionmode="0" mousepointer="0" snaptogrid="0" autotypeannotation="1" showscrollbars="0" viewpagebreaks="0" donotforceconnectorsbehindshapes="1" backpictureclsid="{00000000-0000-0000-0000-000000000000}">
             <font>
               <ddsxmlobjectstreamwrapper binary="010000009001b0300100065461686f6d61" />
             </font>
@@ -19,7 +19,7 @@
           <layoutmanager>
             <ddsxmlobj />
           </layoutmanager>
-          <ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge" tooltip="Dim_Return_Profile" left="20" top="0" logicalid="1" controlid="1" masterid="0" hint1="0" hint2="0" width="4318" height="2307" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0">
+          <ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge" tooltip="Dim_Return_Profile" left="20" top="0" logicalid="2" controlid="1" masterid="0" hint1="0" hint2="0" width="4318" height="2307" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0">
             <control>
               <ddsxmlobjectstreaminitwrapper binary="000e0000de10000003090000" />
             </control>
@@ -65,63 +65,91 @@
       <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:DiagramZoom</Name>
       <Value>100</Value>
     </Annotation>
+    <Annotation>
+      <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:ARDiagramLayout</Name>
+      <Value>
+        <DiagramLayout ZoomPercent="100" ViewPortX="0" ViewPortY="0" xmlns="">
+          <Shapes NodeWidth="203">
+            <Shape Id="Return Profile Key" Expanded="false">
+              <Attributes>
+                <Attribute Id="Return Profile Key" />
+                <Attribute Id="Return Status" />
+              </Attributes>
+              <Position x="20" y="20" />
+            </Shape>
+            <Shape Id="Return Reason" Expanded="false">
+              <Attributes>
+                <Attribute Id="Return Reason" />
+              </Attributes>
+              <Position x="278" y="20" />
+            </Shape>
+            <Shape Id="Return Reason Category" Expanded="false">
+              <Attributes>
+                <Attribute Id="Return Reason Category" />
+              </Attributes>
+              <Position x="537" y="20" />
+            </Shape>
+          </Shapes>
+        </DiagramLayout>
+      </Value>
+    </Annotation>
   </Annotations>
   <LastProcessed>0001-01-01T00:00:00Z</LastProcessed>
   <State>Unprocessed</State>
-  <Source xsi:type="DataSourceViewBinding" dwd:design-time-name="9c2bf99c-eae1-4fcc-bc9b-7dc232f8fde1">
+  <Source xsi:type="DataSourceViewBinding" dwd:design-time-name="e137a1c4-fc17-4d6a-b9cd-6f69ad64a805">
     <DataSourceViewID>E Commerce DW</DataSourceViewID>
   </Source>
   <UnknownMember>Visible</UnknownMember>
-  <ErrorConfiguration dwd:design-time-name="d289d93c-4127-4e15-a879-5939392e8efe">
+  <ErrorConfiguration dwd:design-time-name="aba8a426-e9da-4fbb-9841-8ceff8a8f1c8">
     <KeyNotFound>ReportAndStop</KeyNotFound>
     <KeyDuplicate>ReportAndStop</KeyDuplicate>
     <NullKeyNotAllowed>ReportAndStop</NullKeyNotAllowed>
   </ErrorConfiguration>
   <CurrentStorageMode>Molap</CurrentStorageMode>
   <Attributes>
-    <Attribute dwd:design-time-name="faf5022b-7de2-4060-be5e-9ed4c47e4fe9">
+    <Attribute dwd:design-time-name="00c56764-1b55-49bf-bb26-1dc7618799ce">
       <ID>Return Profile Key</ID>
       <Name>Return Profile</Name>
       <Usage>Key</Usage>
       <KeyColumns>
-        <KeyColumn dwd:design-time-name="733f4258-c628-4ee2-a290-37b8e6eaeda3">
+        <KeyColumn dwd:design-time-name="e1511836-9c99-42fc-a1e9-9a45ea38abb3">
           <DataType>Integer</DataType>
           <NullProcessing>UnknownMember</NullProcessing>
-          <Source xsi:type="ColumnBinding" dwd:design-time-name="c282bfab-368d-4881-9ef3-f1add1028fc6">
+          <Source xsi:type="ColumnBinding" dwd:design-time-name="45b90793-bb67-4153-825f-5d1cd5e48302">
             <TableID>dbo_Dim_Return_Profile</TableID>
             <ColumnID>return_profile_key</ColumnID>
           </Source>
         </KeyColumn>
       </KeyColumns>
-      <NameColumn dwd:design-time-name="e100e8fc-6a4b-4657-bf11-7d63bc3811f3">
+      <NameColumn dwd:design-time-name="e8806505-17cb-4131-8eb5-20c75e94e027">
         <DataType>WChar</DataType>
         <DataSize>150</DataSize>
-        <Source xsi:type="ColumnBinding" dwd:design-time-name="6d9ac4bf-c0b1-4f17-b2bb-0808e3108d35">
+        <Source xsi:type="ColumnBinding" dwd:design-time-name="4c5a9573-da96-419a-ba38-8c94ee019422">
           <TableID>dbo_Dim_Return_Profile</TableID>
           <ColumnID>return_reason</ColumnID>
         </Source>
       </NameColumn>
       <AttributeRelationships>
-        <AttributeRelationship dwd:design-time-name="311ace5e-0f16-4ad3-a682-8024bb9c78de">
+        <AttributeRelationship dwd:design-time-name="ea70730e-6be8-49e2-a772-93d641f0c2b5">
           <AttributeID>Return Status</AttributeID>
           <Name>Return Status</Name>
         </AttributeRelationship>
-        <AttributeRelationship dwd:design-time-name="c979ebad-1a3a-4fb1-ab8c-64165a8e5d7a">
-          <AttributeID>Return Reason Category</AttributeID>
-          <Name>Return Reason Category</Name>
+        <AttributeRelationship dwd:design-time-name="619d15d9-f41d-4828-b49c-7b5d112df6ed">
+          <AttributeID>Return Reason</AttributeID>
+          <Name>Return Reason</Name>
         </AttributeRelationship>
       </AttributeRelationships>
       <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
       <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
     </Attribute>
-    <Attribute dwd:design-time-name="7417f603-2918-482e-bf83-0da082e0f86f">
+    <Attribute dwd:design-time-name="5bfecef3-d3df-4927-96ed-78556852d2d4">
       <ID>Return Status</ID>
       <Name>Return Status</Name>
       <KeyColumns>
-        <KeyColumn dwd:design-time-name="7003e7ee-a896-4593-b4b1-a55b05aa8de1">
+        <KeyColumn dwd:design-time-name="a948d4f5-082d-4bdc-8fbe-81310e7d3c77">
           <DataType>WChar</DataType>
           <DataSize>50</DataSize>
-          <Source xsi:type="ColumnBinding" dwd:design-time-name="95aa6540-3eb9-4c9a-8352-8bfcdeee91f3">
+          <Source xsi:type="ColumnBinding" dwd:design-time-name="d8b354cb-7ae4-4da4-bba6-81d1af389680">
             <TableID>dbo_Dim_Return_Profile</TableID>
             <ColumnID>return_status</ColumnID>
           </Source>
@@ -131,23 +159,65 @@
       <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
       <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
     </Attribute>
-    <Attribute dwd:design-time-name="a13fcd4a-23ea-40fc-b077-da16630b9195">
+    <Attribute dwd:design-time-name="c1a22fa9-26f7-4eb3-b7ef-cf07c38df1c8">
       <ID>Return Reason Category</ID>
       <Name>Return Reason Category</Name>
       <KeyColumns>
-        <KeyColumn dwd:design-time-name="b15e7361-cdfb-4fb9-8deb-f4e26fb880e6">
+        <KeyColumn dwd:design-time-name="f2cb8350-80c8-4bb5-918f-2f8a8805a989">
           <DataType>WChar</DataType>
           <DataSize>50</DataSize>
-          <Source xsi:type="ColumnBinding" dwd:design-time-name="ee1a6660-f619-4827-9c51-62279b0a2e00">
+          <Source xsi:type="ColumnBinding" dwd:design-time-name="39940833-1171-4faf-8b23-936cb20d9790">
             <TableID>dbo_Dim_Return_Profile</TableID>
             <ColumnID>return_reason_category</ColumnID>
           </Source>
         </KeyColumn>
       </KeyColumns>
       <OrderBy>Key</OrderBy>
+      <AttributeHierarchyVisible>false</AttributeHierarchyVisible>
+      <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
+      <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
+    </Attribute>
+    <Attribute dwd:design-time-name="a321db99-f143-49f7-ab11-b51f7a82dac7">
+      <ID>Return Reason</ID>
+      <Name>Return Reason</Name>
+      <KeyColumns>
+        <KeyColumn dwd:design-time-name="9ae9709a-78da-40af-bb34-7162834c8fb8">
+          <DataType>WChar</DataType>
+          <DataSize>150</DataSize>
+          <Source xsi:type="ColumnBinding" dwd:design-time-name="6e01291e-962a-4f13-a2d2-dc231a71b2b4">
+            <TableID>dbo_Dim_Return_Profile</TableID>
+            <ColumnID>return_reason</ColumnID>
+          </Source>
+        </KeyColumn>
+      </KeyColumns>
+      <AttributeRelationships>
+        <AttributeRelationship dwd:design-time-name="fd072efb-a0ad-4ae8-90f2-b169b6268400">
+          <AttributeID>Return Reason Category</AttributeID>
+          <Name>Return Reason Category</Name>
+        </AttributeRelationship>
+      </AttributeRelationships>
+      <AttributeHierarchyVisible>false</AttributeHierarchyVisible>
       <ddl200:ProcessingState>Unprocessed</ddl200:ProcessingState>
       <ddl300:AttributeHierarchyProcessingState>Unprocessed</ddl300:AttributeHierarchyProcessingState>
     </Attribute>
   </Attributes>
+  <Hierarchies>
+    <Hierarchy dwd:design-time-name="ed0ead02-04cc-4910-a128-3042676127aa">
+      <ID>Hierarchy</ID>
+      <Name>Return Reason Hierarchy</Name>
+      <Levels>
+        <Level dwd:design-time-name="aea6bc27-bd97-46d6-89ce-a7c7f2391e41">
+          <ID>Return Reason Category</ID>
+          <Name>Return Reason Category</Name>
+          <SourceAttributeID>Return Reason Category</SourceAttributeID>
+        </Level>
+        <Level dwd:design-time-name="c59d137a-750a-4eb1-aa14-3f8f78dfc5dd">
+          <ID>Return Reason</ID>
+          <Name>Return Reason</Name>
+          <SourceAttributeID>Return Reason</SourceAttributeID>
+        </Level>
+      </Levels>
+    </Hierarchy>
+  </Hierarchies>
   <ddl300:ProcessingState>Unprocessed</ddl300:ProcessingState>
 </Dimension>

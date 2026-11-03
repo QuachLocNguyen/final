@@ -72,7 +72,7 @@
           <ConfigurationSetting>
             <Id>E Commerce DW</Id>
             <Name>E Commerce DW</Name>
-            <Value xsi:type="xsd:string">Provider=MSOLEDBSQL.1;Data Source=MSI\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=EcommerceDW</Value>
+            <Value xsi:type="xsd:string">Provider=MSOLEDBSQL.1;Data Source=MSI\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=ECommerceDW</Value>
           </ConfigurationSetting>
         </ConnectionMappings>
         <ConnectionSecurityMappings>
